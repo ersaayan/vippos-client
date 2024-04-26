@@ -1,0 +1,47 @@
+<form [formGroup]="loginForm" (ngSubmit)="login()">
+  <p-card
+    [style]="{
+    width: '360px',
+  }"
+  >
+    <h2 style="text-align: center">Vip-Pos</h2>
+    <div class="field">
+      <label class="email">E-Mail</label>
+      <input
+        type="text"
+        pInputText
+        formControlName="email"
+        class="w-full"
+        name="email"
+        placeholder="example@domain.com"
+      />
+    </div>
+    <small
+      *ngIf="email?.invalid && (email?.dirty || email?.touched)"
+      class="block p-error"
+    >
+      <div *ngIf="email?.errors?.['required']">Email is required</div>
+      <div *ngIf="email?.errors?.['email']">Email should be valid</div>
+    </small>
+    <br />
+    <div class="field">
+      <label class="password">Password</label>
+      <input
+        type="password"
+        pInputText
+        formControlName="password"
+        class="w-full"
+        name="password"
+        placeholder="pa$$w0rd"
+      />
+    </div>
+    <small
+      *ngIf="password?.invalid && (password?.dirty || password?.touched)"
+      class="block p-error"
+    >
+      <div *ngIf="password?.errors?.['required']">Password is required</div>
+    </small>
+    <br />
+    <p-button label="Log In" [raised]="true" styleClass="w-full" [disabled]="loginForm.invalid" type="submit"></p-button>
+  </p-card>
+</form>
