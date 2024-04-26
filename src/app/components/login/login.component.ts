@@ -10,11 +10,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
-import { LoginRequest } from '../../interfaces/login-request';
-import { ToastModule } from 'primeng/toast';
 import { Router } from '@angular/router';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MessageService } from 'primeng/api';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -24,20 +23,23 @@ import { MessageService } from 'primeng/api';
     ReactiveFormsModule,
     ButtonModule,
     CommonModule,
-    ToastModule,
+    MatSnackBarModule,
   ],
   providers: [MessageService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
+
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
-  messageService= inject(MessageService);
+  messageService = inject(MessageService);
+  matSnacksBar = inject(MatSnackBar);
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
   ) {}
+
   ngOnInit(): void {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -46,28 +48,25 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.authService.login(this.loginForm.value).subscribe(
-      (response) => {
-        if (response.isSuccess) {
-          setTimeout(() => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Logged In',
-            detail: 'Successful Login!',
-          });
-        }, 1000);
-          this.router.navigate(['/home']);
-        }
-      },
-      (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to Login!',
+    this.authService.login(this.loginForm.value).subscribe({
+      next: (response) => {
+        this.matSnacksBar.open('Login Successful', 'Close', {
+          duration: 2000,
+          verticalPosition: 'top',
+          horizontalPosition: 'right',
         });
-      }
-    );
+        this.router.navigate(['/home']);
+      },
+      error: (error) => {
+        this.matSnacksBar.open('Login Failed', 'Close', {
+          duration: 2000,
+          verticalPosition: 'top',
+          horizontalPosition: 'right',
+        });
+      },
+    });
   }
+
   ngAfterViewInit() {
     setTimeout(() => {
       this.messageService.add({
@@ -75,14 +74,17 @@ export class LoginComponent implements OnInit {
         severity: 'success',
         styleClass: 'bg-green-500',
         contentStyleClass: 'p-3',
-        closable: false
+        closable: false,
       });
     });
   }
+
   get email() {
     return this.loginForm.controls['email'];
   }
+
   get password() {
     return this.loginForm.controls['password'];
   }
+
 }
