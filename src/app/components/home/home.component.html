@@ -1,0 +1,186 @@
+<form [formGroup]="stokKart">
+  <div id="stokForm" class="card container">
+    <p-card header="Stok Generator">
+      <div class="field">
+        <label class="text">Case Brand</label>
+        <input
+          type="text"
+          pInputText
+          formControlName="CaseBrand"
+          class="w-full"
+          name="CaseBrand"
+          placeholder="Berry"
+        />
+      </div>
+      <small
+        #errorRef
+        *ngIf="CaseBrand?.invalid && (CaseBrand?.dirty || CaseBrand?.touched)"
+        class="block p-error"
+      >
+        <div *ngIf="CaseBrand?.errors?.['required']">
+          Case Brand is required
+        </div>
+      </small>
+      <div class="field">
+        <label class="file">Case Image</label>
+        <input
+          type="file"
+          pInputText
+          formControlName="CaseModelImage"
+          class="w-full"
+          name="CaseModelImage"
+        />
+      </div>
+      <small
+        #errorRef
+        *ngIf="
+          CaseModelImage?.invalid &&
+          (CaseModelImage?.dirty || CaseModelImage?.touched)
+        "
+        class="block p-error"
+      >
+        <div *ngIf="CaseModelImage?.errors?.['required']">
+          Case Image is required
+        </div>
+      </small>
+      <div class="field">
+        <label class="text">Case Model Variations</label>
+        <input
+          type="text"
+          pInputText
+          formControlName="CaseModelVariations"
+          class="w-full"
+          name="CaseModelVariations"
+          placeholder="Kahve"
+        />
+      </div>
+      <small
+        #errorRef
+        *ngIf="
+          CaseModelVariations?.invalid &&
+          (CaseModelVariations?.dirty || CaseModelVariations?.touched)
+        "
+        class="block p-error"
+      >
+        <div *ngIf="CaseModelVariations?.errors?.['required']">
+          Case Model Variations is required
+        </div>
+      </small>
+      <div class="field">
+        <label class="text">Case Model Title</label>
+        <input
+          type="text"
+          pInputText
+          formControlName="CaseModelTitle"
+          class="w-full"
+          name="CaseModelTitle"
+          placeholder="Magsafe"
+        />
+      </div>
+      <small
+        #errorRef
+        *ngIf="
+          CaseModelTitle?.invalid &&
+          (CaseModelTitle?.dirty || CaseModelTitle?.touched)
+        "
+        class="block p-error"
+      >
+        <div *ngIf="CaseModelTitle?.errors?.['required']">
+          Case Model Title is required
+        </div>
+      </small>
+      <div class="field">
+        <label class="text">Description</label>
+        <input
+          type="text"
+          pInputText
+          formControlName="Description"
+          class="w-full"
+          name="Description"
+          placeholder="Kahve rengi kılıf"
+        />
+      </div>
+      <div class="field">
+        <label class="text">Barcode</label>
+        <input
+          type="text"
+          pInputText
+          formControlName="Barcode"
+          class="w-full"
+          name="Barcode"
+          placeholder="84675689"
+        />
+      </div>
+      <br>
+      <p-button
+        label="Generate Stok Kart"
+        [raised]="true"
+        styleClass="w-full"
+        type="submit"
+      ></p-button>
+    </p-card>
+  </div>
+  <div id="productTable" class="card container">
+    <p-table
+      #dt2
+      [value]="products"
+      dataKey="id"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [loading]="loading"
+      [paginator]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [globalFilterFields]="[
+        'PhoneBrandModelName',
+        'PhoneBrandName',
+        'PhoneBrandModelStockCode'
+      ]"
+      [tableStyle]="{ 'min-width': '75rem' }"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 4rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th style="width: 36%">Brand Model Name</th>
+          <th style="width: 32%">Brand Name</th>
+          <th style="width: 32%">SKU</th>
+        </tr>
+        <tr>
+          <th></th>
+          <th>
+            <p-columnFilter
+              type="text"
+              field="PhoneBrandModelName"
+            ></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="PhoneBrandName"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter
+              type="text"
+              field="PhoneBrandModelStockCode"
+            ></p-columnFilter>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-products>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="products"></p-tableCheckbox>
+          </td>
+          <td>{{ products.PhoneBrandModelName }}</td>
+          <td>{{ products.PhoneBrandName }}</td>
+          <td>{{ products.PhoneBrandModelStockCode }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5">No products found.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</form>
