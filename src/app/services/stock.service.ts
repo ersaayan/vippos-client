@@ -17,7 +17,7 @@ export class StockService {
   }
 
   getStockKarts(): Observable<StockResponse[]> {
-    return this.http.get<any>(`${this.apiUrl}/stock-kart`).pipe(
+    return this.http.get<any>(`${this.apiUrl}/stock-kart/custom-output`).pipe(
       map((response: any[]) => {
         return response.map((item) => ({
           id: item.id,
@@ -27,6 +27,9 @@ export class StockService {
           ProductIds: item.ProductIds[0],
           Description: item.Description,
           Barcode: item.Barcode,
+          myorStockName: item.myorStockName,
+          ikasStockName: item.ikasStockName,
+          stockCode: item.stockCode,
           createdAt: new Date(item.createdAt),
           updatedAt: new Date(item.updatedAt),
         }));

@@ -114,6 +114,7 @@ export class HomeComponent implements OnInit {
     this.stockService.getStockKarts().subscribe(
       (stockKarts) => {
         this.stockKarts = stockKarts;
+        console.log('Stock Karts: ', this.stockKarts);
         this.loading = false;
       },
       (error) => {
@@ -137,6 +138,11 @@ export class HomeComponent implements OnInit {
       { field: 'ProductIds', header: 'Product Ids' },
       { field: 'Description', header: 'Description' },
       { field: 'Barcode', header: 'Barcode' },
+      { field: 'myorStockName', header: 'Myor Stock Name' },
+      { field: 'ikasStockName', header: 'Ikas Stock Name' },
+      { field: 'stockCode', header: 'Stock Code' },
+      { field: 'createdAt', header: 'Created At' },
+      { field: 'updatedAt', header: 'Updated At' },
     ];
 
     this.exportColumns = this.cols.map((col) => ({
@@ -310,11 +316,15 @@ export class HomeComponent implements OnInit {
           }
         );
         // Başarılı bir şekilde silindiğine dair bir mesaj gösterebilirsiniz
-        this.matSnacksBar.open('Stock Karts saved successfully. Now, you can download it', 'Close', {
-          duration: 2000,
-          verticalPosition: 'top',
-          horizontalPosition: 'right',
-        });
+        this.matSnacksBar.open(
+          'Stock Karts saved successfully. Now, you can download it',
+          'Close',
+          {
+            duration: 2000,
+            verticalPosition: 'top',
+            horizontalPosition: 'right',
+          }
+        );
       },
       (error) => {
         console.error('Error deleting Stock Karts: ', error);
@@ -327,6 +337,10 @@ export class HomeComponent implements OnInit {
       }
     );
   }
-
-
+  downloadIkas() {
+    window.location.href = 'http://localhost:1303/stock-kart/ikas-export';
+  }
+  downloadMyor() {
+    window.location.href = 'http://localhost:1303/stock-kart/myor-export';
+  }
 }
