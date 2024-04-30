@@ -1,4 +1,4 @@
-<form [formGroup]="stokKart">
+<form [formGroup]="stokKart" (ngSubmit)="generateStockKart()">
   <div id="stokForm" class="card container">
     <p-card header="Stok Generator">
       <div class="field">
@@ -27,6 +27,7 @@
           type="file"
           pInputText
           formControlName="CaseModelImage"
+          (change)="onFileSelected($event)"
           class="w-full"
           name="CaseModelImage"
         />
@@ -44,28 +45,42 @@
         </div>
       </small>
       <div class="field">
-        <label class="text">Case Model Variations</label>
+        <label class="text">Number of Variations</label>
+        <input
+          type="number"
+          pInputText
+          formControlName="NumberOfVariations"
+          class="w-full"
+          name="NumberOfVariations"
+          min="1"
+        />
+      </div>
+      <div
+        *ngFor="let variation of variationsArray.controls; let i = index"
+        class="field"
+      >
+        <label class="text">Case Model Variation {{ i + 1 }}</label>
         <input
           type="text"
           pInputText
-          formControlName="CaseModelVariations"
+          [formControlName]="i"
           class="w-full"
-          name="CaseModelVariations"
-          placeholder="Kahve"
+          [placeholder]="'Variation ' + (i + 1)"
         />
+        <small
+          #errorRef
+          *ngIf="
+            stokKart.get(i.toString())?.invalid &&
+            (stokKart.get(i.toString())?.dirty ||
+              stokKart.get(i.toString())?.touched)
+          "
+          class="block p-error"
+        >
+          <div *ngIf="stokKart.get(i.toString())?.errors?.['required']">
+            Variation is required
+          </div>
+        </small>
       </div>
-      <small
-        #errorRef
-        *ngIf="
-          CaseModelVariations?.invalid &&
-          (CaseModelVariations?.dirty || CaseModelVariations?.touched)
-        "
-        class="block p-error"
-      >
-        <div *ngIf="CaseModelVariations?.errors?.['required']">
-          Case Model Variations is required
-        </div>
-      </small>
       <div class="field">
         <label class="text">Case Model Title</label>
         <input
@@ -111,7 +126,7 @@
           placeholder="84675689"
         />
       </div>
-      <br>
+      <br />
       <p-button
         label="Generate Stok Kart"
         [raised]="true"
@@ -124,10 +139,11 @@
     <p-table
       #dt2
       [value]="products"
+      [(selection)]="selectedProducts"
       dataKey="id"
-      [rows]="10"
+      [rows]="14"
       [showCurrentPageReport]="true"
-      [rowsPerPageOptions]="[10, 25, 50]"
+      [rowsPerPageOptions]="[14, 20, 25]"
       [loading]="loading"
       [paginator]="true"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -184,3 +200,104 @@
     </p-table>
   </div>
 </form>
+<div id="stockKartTable" class="card container">
+  <p-table
+    #dt2
+    [value]="stockKarts"
+    [(selection)]="selectedStockKarts"
+    dataKey="id"
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [loading]="loading"
+    [paginator]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [globalFilterFields]="[
+      'CaseBrand',
+      'CaseModelVariations',
+      'CaseModelTitle',
+      'ProductIds',
+      'Description',
+      'Barcode'
+    ]"
+    [tableStyle]="{ 'min-width': '75rem' }"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 4rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th style="width: 21%">Stock Code</th>
+        <th style="width: 15%">Case Brand Name</th>
+        <th style="width: 17%">Case Model Variations</th>
+        <th style="width: 17%">Case Model Title</th>
+        <th style="width: 15%">Description</th>
+        <th style="width: 15%">Barcode</th>
+      </tr>
+      <tr>
+        <th></th>
+        <th>
+          <p-columnFilter type="text" field="CaseBrand"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter
+            type="text"
+            field="CaseModelVariations"
+          ></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="text" field="CaseModelTitle"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="text" field="ProductIds"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="text" field="Description"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="text" field="Barcode"></p-columnFilter>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-stockKarts>
+      <tr>
+        <td>
+          <p-tableCheckbox [value]="stockKarts"></p-tableCheckbox>
+        </td>
+        <td>{{ stockKarts.ProductIds }}</td>
+        <td>{{ stockKarts.CaseBrand }}</td>
+        <td>{{ stockKarts.CaseModelVariations }}</td>
+        <td>{{ stockKarts.CaseModelTitle }}</td>
+        <td>{{ stockKarts.Description }}</td>
+        <td>{{ stockKarts.Barcode }}</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">No Stock Karts found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<div id="buttonsArea" class="card flex justify-content-center">
+  <p-button
+    id="editButton"
+    label="Edit Table"
+    severity="info"
+    (onClick)="deleteStockKartsForIdsNotSent()"
+  >
+    <ng-template pTemplate="icon">
+      <img src="../../../assets/tick.ico" />
+    </ng-template>
+  </p-button>
+  <p-button id="myorButton" label="Download For Myor" severity="success">
+    <ng-template pTemplate="icon">
+      <img src="../../../assets/myor.ico" />
+    </ng-template>
+  </p-button>
+  <p-button id="ikasButton" label="Download For İkas">
+    <ng-template pTemplate="icon">
+      <img src="../../../assets/ikas.ico" />
+    </ng-template>
+  </p-button>
+</div>

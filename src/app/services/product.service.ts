@@ -15,22 +15,18 @@ export class ProductService {
   constructor(private http: HttpClient) {}
 
   getProducts(): Observable<ProductResponse[]> {
-    return this.http.get<ProductResponse[]>(`${this.apiUrl}/products`)
-      .pipe(
-        map((response: any[]) => {
-          return response.map(item => ({
-            id: item.id,
-            PhoneBrandModelName: item.PhoneBrandModelName,
-            PhoneBrandModelStockCode: item.PhoneBrandModelStockCode,
-            PhoneBrandName: item.PhoneBrandName,
-            PhoneModelGroupCode: item.PhoneModelGroupCode,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt)
-          }));
-        })
-      );
+    return this.http.get<ProductResponse[]>(`${this.apiUrl}/products`).pipe(
+      map((response: any[]) => {
+        return response.map((item) => ({
+          id: item.id,
+          PhoneBrandModelName: item.PhoneBrandModelName,
+          PhoneBrandModelStockCode: item.PhoneBrandModelStockCode,
+          PhoneBrandName: item.PhoneBrandName,
+          PhoneModelGroupCode: item.PhoneModelGroupCode,
+          createdAt: new Date(item.createdAt),
+          updatedAt: new Date(item.updatedAt),
+        }));
+      })
+    );
   }
-
-
-
 }
