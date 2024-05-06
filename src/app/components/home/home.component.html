@@ -1,4 +1,4 @@
-<form [formGroup]="stokKart" (ngSubmit)="generateStockKart()">
+<form [formGroup]="stokKart" (ngSubmit)="generateStockKart()" class="mb-4">
   <div id="stokForm" class="card container">
     <p-card header="Stok Generator">
       <div class="field">
@@ -136,7 +136,9 @@
       ></p-button>
     </p-card>
   </div>
-  <div id="productTable" class="card container">
+</form>
+<div id="productTable" class="card container mb-4">
+  <p-card header="Products">
     <p-table
       #dt2
       [value]="products"
@@ -199,83 +201,86 @@
         </tr>
       </ng-template>
     </p-table>
-  </div>
-</form>
-<div id="stockKartTable" class="card container">
-  <p-table
-    #dt2
-    [value]="stockKarts"
-    [(selection)]="selectedStockKarts"
-    dataKey="id"
-    [rows]="10"
-    [showCurrentPageReport]="true"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [loading]="loading"
-    [paginator]="true"
-    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-    [globalFilterFields]="[
-      'CaseBrand',
-      'CaseModelVariations',
-      'CaseModelTitle',
-      'ProductIds',
-      'Description',
-      'Barcode'
-    ]"
-    [tableStyle]="{ 'min-width': '75rem' }"
-  >
-    <ng-template pTemplate="header">
-      <tr>
-        <th style="width: 4rem">
-          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-        </th>
-        <th style="width: 20%">Stock Code</th>
-        <th style="width: 19%">Myor Stock Name</th>
-        <th style="width: 19%">İkas Stock Name</th>
-        <th style="width: 14%">Case Model Title</th>
-        <th style="width: 14%">Description</th>
-        <th style="width: 14%">Barcode</th>
-      </tr>
-      <tr>
-        <th></th>
-        <th>
-          <p-columnFilter type="text" field="stockCode"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="myorStockName"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="ikasStockName"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="CaseModelTitle"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="Description"></p-columnFilter>
-        </th>
-        <th>
-          <p-columnFilter type="text" field="Barcode"></p-columnFilter>
-        </th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-stockKarts>
-      <tr>
-        <td>
-          <p-tableCheckbox [value]="stockKarts"></p-tableCheckbox>
-        </td>
-        <td>{{ stockKarts.stockCode }}</td>
-        <td>{{ stockKarts.myorStockName }}</td>
-        <td>{{ stockKarts.ikasStockName }}</td>
-        <td>{{ stockKarts.CaseModelTitle }}</td>
-        <td>{{ stockKarts.Description }}</td>
-        <td>{{ stockKarts.Barcode }}</td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="5">No Stock Karts found.</td>
-      </tr>
-    </ng-template>
-  </p-table>
+  </p-card>
+</div>
+
+<div id="stockKartTable" class="card container mb-4">
+  <p-card header="Stock Cart">
+    <p-table
+      #dt2
+      [value]="stockKarts"
+      [(selection)]="selectedStockKarts"
+      dataKey="id"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [loading]="loading"
+      [paginator]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [globalFilterFields]="[
+        'CaseBrand',
+        'CaseModelVariations',
+        'CaseModelTitle',
+        'ProductIds',
+        'Description',
+        'Barcode'
+      ]"
+      [tableStyle]="{ 'min-width': '75rem' }"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 4rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th style="width: 20%">Stock Code</th>
+          <th style="width: 19%">Myor Stock Name</th>
+          <th style="width: 19%">İkas Stock Name</th>
+          <th style="width: 14%">Case Model Title</th>
+          <th style="width: 14%">Description</th>
+          <th style="width: 14%">Barcode</th>
+        </tr>
+        <tr>
+          <th></th>
+          <th>
+            <p-columnFilter type="text" field="stockCode"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="myorStockName"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="ikasStockName"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="CaseModelTitle"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="Description"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="Barcode"></p-columnFilter>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-stockKarts>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="stockKarts"></p-tableCheckbox>
+          </td>
+          <td>{{ stockKarts.stockCode }}</td>
+          <td>{{ stockKarts.myorStockName }}</td>
+          <td>{{ stockKarts.ikasStockName }}</td>
+          <td>{{ stockKarts.CaseModelTitle }}</td>
+          <td>{{ stockKarts.Description }}</td>
+          <td>{{ stockKarts.Barcode }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5">No Stock Karts found.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
 </div>
 <div id="buttonsArea" class="card flex justify-content-center">
   <p-button
@@ -285,7 +290,17 @@
     (onClick)="deleteStockKartsForIdsNotSent()"
   >
     <ng-template pTemplate="icon">
-      <img src="../../../assets/tick.ico" />
+      <img src="../../../assets/icons/tick.ico" />
+    </ng-template>
+  </p-button>
+  <p-button
+    id="dbButton"
+    label="Save database"
+    severity="danger"
+    (onClick)="transferDb()"
+  >
+    <ng-template pTemplate="icon">
+      <img src="../../../assets/icons/database.ico" />
     </ng-template>
   </p-button>
   <p-button
@@ -295,16 +310,17 @@
     (onClick)="downloadMyor()"
   >
     <ng-template pTemplate="icon">
-      <img src="../../../assets/myor.ico" />
+      <img src="../../../assets/icons/myor.ico" />
     </ng-template>
   </p-button>
   <p-button
     id="ikasButton"
     label="Download For İkas"
+    severity="warning"
     (onClick)="downloadIkas()"
   >
     <ng-template pTemplate="icon">
-      <img src="../../../assets/ikas.ico" />
+      <img src="../../../assets/icons/ikas.ico" />
     </ng-template>
   </p-button>
 </div>

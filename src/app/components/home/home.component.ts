@@ -107,19 +107,18 @@ export class HomeComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching products: ', error);
-        this.loading = true;
+        this.loading = false;
       }
     );
 
     this.stockService.getStockKarts().subscribe(
       (stockKarts) => {
         this.stockKarts = stockKarts;
-        console.log('Stock Karts: ', this.stockKarts);
         this.loading = false;
       },
       (error) => {
         console.error('Error fetching stock karts: ', error);
-        this.loading = true;
+        this.loading = false;
       }
     );
 
@@ -247,7 +246,6 @@ export class HomeComponent implements OnInit {
     // ProductIds
     let proArry: string[] = [];
     const productIds = this.selectedProducts.map((product) => product.id);
-    console.log('ProductIds: ', productIds);
     for (const productId of productIds) {
       proArry.push(productId);
     }
@@ -268,7 +266,6 @@ export class HomeComponent implements OnInit {
 
     this.stockService.generateStockKart(formData).subscribe(
       (response) => {
-        console.log('Stock Kart generated successfully: ', response);
         // Stok kart tablosunu yeniden yükleyebilirsiniz
         this.stockService.getStockKarts().subscribe(
           (stockKarts) => {
@@ -277,7 +274,7 @@ export class HomeComponent implements OnInit {
           },
           (error) => {
             console.error('Error fetching stock karts: ', error);
-            this.loading = true;
+            this.loading = false;
           }
         );
         // Başarılı bir şekilde oluşturulduğuna dair bir mesaj gösterebilirsiniz
@@ -303,7 +300,6 @@ export class HomeComponent implements OnInit {
     const ids = this.selectedStockKarts.map((stockKart) => stockKart.id);
     this.stockService.deleteStockKartsForIdsNotSent(ids).subscribe(
       (response) => {
-        console.log('Stock Karts deleted successfully: ', response);
         // Stok kart tablosunu yeniden yükleyebilirsiniz
         this.stockService.getStockKarts().subscribe(
           (stockKarts) => {
@@ -312,7 +308,7 @@ export class HomeComponent implements OnInit {
           },
           (error) => {
             console.error('Error fetching stock karts: ', error);
-            this.loading = true;
+            this.loading = false;
           }
         );
         // Başarılı bir şekilde silindiğine dair bir mesaj gösterebilirsiniz
@@ -338,9 +334,47 @@ export class HomeComponent implements OnInit {
     );
   }
   downloadIkas() {
-    window.location.href = 'http://localhost:1303/stock-kart/ikas-export';
+    window.location.href =
+      'http://95.173.181.140:1303/stock-kart/ikas-export-yedek';
   }
   downloadMyor() {
-    window.location.href = 'http://localhost:1303/stock-kart/myor-export';
+    window.location.href =
+      'http://95.173.181.140:1303/stock-kart/myor-export-yedek';
+  }
+  transferDb() {
+    this.stockService.transferDb().subscribe(
+      (response) => {
+        // Stok kart tablosunu yeniden yükleyebilirsiniz
+        this.stockService.getStockKarts().subscribe(
+          (stockKarts) => {
+            this.stockKarts = stockKarts;
+            this.loading = false;
+          },
+          (error) => {
+            console.error('Error fetching stock karts: ', error);
+            this.loading = false;
+          }
+        );
+        // Başarılı bir şekilde transfer edildiğine dair bir mesaj gösterebilirsiniz
+        this.matSnacksBar.open(
+          'Stock Karts transferred successfully',
+          'Close',
+          {
+            duration: 2000,
+            verticalPosition: 'top',
+            horizontalPosition: 'right',
+          }
+        );
+      },
+      (error) => {
+        console.error('Error transferring Stock Karts: ', error);
+        // Hata olduğunda bir hata mesajı gösterebilirsiniz
+        this.matSnacksBar.open('Stock Karts transferred failed', 'Close', {
+          duration: 2000,
+          verticalPosition: 'top',
+          horizontalPosition: 'right',
+        });
+      }
+    );
   }
 }

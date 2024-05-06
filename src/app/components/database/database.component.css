@@ -4,20 +4,6 @@
   display: block;
 }
 
-#stokForm {
-  width: 25%; /* Formun genişliğini arttırdık */
-  height: 100%;
-  float: left;
-  padding: 20px; /* Formun etrafına boşluk ekledik */
-}
-
-#productTable {
-  width: 75%; /* Tablonun genişliğini arttırdık */
-  height: 100%;
-  float: right;
-  padding: 20px; /* Tablonun etrafına boşluk ekledik */
-}
-
 #stockKartTable {
   width: 100%; /* Tablonun genişliğini 100% olarak ayarladık */
   height: 100%;
@@ -37,6 +23,6 @@
   padding-right: 20px;
 }
 
-#dbButton {
+#dbRemoveButton {
   padding-left: 20px;
 }
