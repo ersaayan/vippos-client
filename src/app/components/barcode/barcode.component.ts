@@ -109,4 +109,25 @@ export class BarcodeComponent implements OnInit {
       });
     });
   }
+
+  cleanDb() {
+    this.stockService.deleteStockKarts().subscribe((response) => {
+      this.stockService.getStockKartsDb().subscribe(
+        (stockKarts) => {
+          this.stockKarts = stockKarts;
+          this.loading = false;
+        },
+        (error) => {
+          console.error('Error fetching stock karts: ', error);
+          this.loading = false;
+        }
+      );
+    });
+
+    this.matSnacksBar.open('Database Cleaned Successfully', 'Close', {
+      duration: 3000,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+    });
+  }
 }

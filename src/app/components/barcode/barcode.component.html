@@ -145,7 +145,12 @@
   </div>
 </div>
 <div id="buttonsArea" class="card flex justify-content-center">
-  <p-button id="CleanDbButton" label="Clean Database" severity="warning">
+  <p-button
+    id="CleanDbButton"
+    label="Clean Database"
+    severity="warning"
+    (onClick)="cleanDb()"
+  >
     <ng-template pTemplate="icon">
       <img src="../../../assets/icons/delete.ico" />
     </ng-template>
