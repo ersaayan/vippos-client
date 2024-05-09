@@ -6,6 +6,7 @@ import { LayoutComponent } from './components/layout/layout.component';
 import { DatabaseComponent } from './components/database/database.component';
 import { BarcodeComponent } from './components/barcode/barcode.component';
 import { ImageComponent } from './components/image/image.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 export const routes: Routes = [
   {
@@ -42,6 +43,12 @@ export const routes: Routes = [
       {
         path: 'image',
         component: ImageComponent,
+        canActivate: [authGuard],
+        pathMatch: 'full',
+      },
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
         canActivate: [authGuard],
         pathMatch: 'full',
       },

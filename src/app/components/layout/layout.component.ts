@@ -46,6 +46,11 @@ export class LayoutComponent implements OnInit {
         icon: 'pi pi-images',
         route: ['/image'],
       },
+      {
+        label: 'Dashboard',
+        icon: 'pi pi-chart-bar',
+        route: ['/dashboard'],
+      },
     ];
   }
 }
