@@ -159,7 +159,7 @@ export class DashboardComponent implements OnInit {
 
   getHaftaninEnCokSatanUrunleri() {
     this.http
-      .get<any[]>('http://95.173.181.140:5000/haftanin_en_cok_satan_urunleri')
+      .get<any[]>('http://185.122.203.94:5000/haftanin_en_cok_satan_urunleri')
       .subscribe((data) => {
         this.haftaninEnCokSatanUrunleri = data;
       });
@@ -167,7 +167,7 @@ export class DashboardComponent implements OnInit {
 
   getGununEnCokSatanUrunu() {
     this.http
-      .get<any>('http://95.173.181.140:5000/gunun_en_cok_satan_urunu')
+      .get<any>('http://185.122.203.94:5000/gunun_en_cok_satan_urunu')
       .subscribe((data) => {
         this.gununEnCokSatanUrunu = data;
       });
@@ -175,7 +175,7 @@ export class DashboardComponent implements OnInit {
 
   getHaftalikToplamSiparisSayisi() {
     this.http
-      .get<any>('http://95.173.181.140:5000/haftalik_toplam_siparis_sayisi')
+      .get<any>('http://185.122.203.94:5000/haftalik_toplam_siparis_sayisi')
       .subscribe((data) => {
         this.haftalikToplamSiparisSayisi = data;
       });
@@ -183,7 +183,7 @@ export class DashboardComponent implements OnInit {
 
   getGunlukToplamSiparisSayisi() {
     this.http
-      .get<any>('http://95.173.181.140:5000/gunluk_toplam_siparis_sayisi')
+      .get<any>('http://185.122.203.94:5000/gunluk_toplam_siparis_sayisi')
       .subscribe((data) => {
         this.gunlukToplamSiparisSayisi = data.TOTAL;
       });
@@ -191,7 +191,7 @@ export class DashboardComponent implements OnInit {
 
   getGunlukToplamKargolananSiparisSayisi() {
     this.http
-      .get<any>('http://95.173.181.140:5000/gunluk_toplam_kargolanan_siparis_sayisi')
+      .get<any>('http://185.122.203.94:5000/gunluk_toplam_kargolanan_siparis_sayisi')
       .subscribe((data) => {
         this.gunlukToplamKargolananSiparisSayisi = data;
       });
@@ -199,7 +199,7 @@ export class DashboardComponent implements OnInit {
 
   getHaftalikToplamSatisSayisi() {
     this.http
-      .get<any>('http://95.173.181.140:5000/haftalik_toplam_satis_sayisi')
+      .get<any>('http://185.122.203.94:5000/haftalik_toplam_satis_sayisi')
       .subscribe((data) => {
         this.haftalikToplamSatisSayisi = data;
       });
@@ -207,7 +207,7 @@ export class DashboardComponent implements OnInit {
 
   getGunlukToplamSatisSayisi() {
     this.http
-      .get<any>('http://95.173.181.140:5000/gunluk_toplam_satis_sayisi')
+      .get<any>('http://185.122.203.94:5000/gunluk_toplam_satis_sayisi')
       .subscribe((data) => {
         this.gunlukToplamSatisSayisi = data.TOTAL;
       });
@@ -215,7 +215,7 @@ export class DashboardComponent implements OnInit {
 
   getHaftalikToplamCiro() {
     this.http
-      .get<any>('http://95.173.181.140:5000/haftalik_toplam_ciro')
+      .get<any>('http://185.122.203.94:5000/haftalik_toplam_ciro')
       .subscribe((data) => {
         this.haftalikToplamCiro = data;
       });
@@ -223,7 +223,7 @@ export class DashboardComponent implements OnInit {
 
   getGunlukToplamCiro() {
     this.http
-      .get<any>('http://95.173.181.140:5000/gunluk_toplam_ciro')
+      .get<any>('http://185.122.203.94:5000/gunluk_toplam_ciro')
       .subscribe((data) => {
         this.gunlukToplamCiro = data;
       });
@@ -231,7 +231,7 @@ export class DashboardComponent implements OnInit {
 
   getDünSatısVeri() {
     this.http
-      .get<any>('http://95.173.181.140:5000/dün-yapılan-satışlar-grafiği')
+      .get<any>('http://185.122.203.94:5000/dün-yapılan-satışlar-grafiği')
       .subscribe((data) => {
         for (const veri of data) {
           this.dünSatısVeri.push(veri.Toplam_Miktar);
@@ -242,7 +242,7 @@ export class DashboardComponent implements OnInit {
 
   getBugünSatısVeri() {
     this.http
-      .get<any>('http://95.173.181.140:5000/bugün-yapılan-satışlar-grafiği')
+      .get<any>('http://185.122.203.94:5000/bugün-yapılan-satışlar-grafiği')
       .subscribe((data) => {
         for (const veri of data) {
           this.bugünSatısVeri.push(veri.Toplam_Miktar);
