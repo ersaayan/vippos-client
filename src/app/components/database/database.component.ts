@@ -90,9 +90,9 @@ export class DatabaseComponent implements OnInit {
     ];
   }
   downloadIkas() {
-    window.location.href = 'http://pos.vipcase.com.tr/api/stock-kart/ikas-export';
+    window.location.href = 'https://pos.vipcase.com.tr/api/stock-kart/ikas-export';
   }
   downloadMyor() {
-    window.location.href = 'http://pos.vipcase.com.tr/api/stock-kart/myor-export';
+    window.location.href = 'https://pos.vipcase.com.tr/api/stock-kart/myor-export';
   }
 }
