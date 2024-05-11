@@ -49,7 +49,7 @@ export class LayoutComponent implements OnInit {
       {
         label: 'Stock Cart Generator',
         icon: 'pi pi-chart-bar',
-        route: ['/dashboard'],
+        route: ['/generator'],
       },
     ];
   }
