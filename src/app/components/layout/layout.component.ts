@@ -32,6 +32,11 @@ export class LayoutComponent implements OnInit {
         route: ['/home'],
       },
       {
+        label: 'Stock Cart Generator',
+        icon: 'pi pi-chart-bar',
+        route: ['/generator'],
+      },
+      {
         label: 'View and Download Database',
         icon: 'pi pi-cloud-download',
         route: ['/database'],
@@ -45,11 +50,6 @@ export class LayoutComponent implements OnInit {
         label: 'Product Image Editor',
         icon: 'pi pi-images',
         route: ['/image'],
-      },
-      {
-        label: 'Stock Cart Generator',
-        icon: 'pi pi-chart-bar',
-        route: ['/generator'],
       },
     ];
   }
