@@ -335,11 +335,11 @@ export class HomeComponent implements OnInit {
   }
   downloadIkas() {
     window.location.href =
-      'https://pos.vipcase.com.tr/api/stock-kart/ikas-export-yedek';
+      'http://pos.vipcase.com.tr/api/stock-kart/ikas-export-yedek';
   }
   downloadMyor() {
     window.location.href =
-      'https://pos.vipcase.com.tr/api/stock-kart/myor-export-yedek';
+      'http://pos.vipcase.com.tr/api/stock-kart/myor-export-yedek';
   }
   transferDb() {
     this.stockService.transferDb().subscribe(

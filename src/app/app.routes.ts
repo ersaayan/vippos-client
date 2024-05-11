@@ -20,7 +20,7 @@ export const routes: Routes = [
     children: [
       {
         path: 'home',
-        component: HomeComponent,
+        component: DashboardComponent,
         canActivate: [authGuard],
       },
       {
@@ -47,8 +47,8 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
-        path: 'dashboard',
-        component: DashboardComponent,
+        path: 'generator',
+        component: HomeComponent,
         canActivate: [authGuard],
         pathMatch: 'full',
       },

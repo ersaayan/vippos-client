@@ -27,7 +27,7 @@ export class LayoutComponent implements OnInit {
   ngOnInit() {
     this.items = [
       {
-        label: 'Stock Cart Generator',
+        label: 'Dashboard',
         icon: 'pi pi-home',
         route: ['/home'],
       },
@@ -47,7 +47,7 @@ export class LayoutComponent implements OnInit {
         route: ['/image'],
       },
       {
-        label: 'Dashboard',
+        label: 'Stock Cart Generator',
         icon: 'pi pi-chart-bar',
         route: ['/dashboard'],
       },
