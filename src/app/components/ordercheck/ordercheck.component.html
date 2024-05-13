@@ -1,11 +1,18 @@
-<p-card header="Barcode Tarayıcı" [style]="{ height: '50%', width: '50%' }">
+<p-card
+  header="Barcode Tarayıcı"
+  [style]="{ height: '50%', width: '50%' }"
+  class="flex align-items-center justify-content-center"
+>
   <zxing-scanner
     [formats]="allowedFormats"
     (scanSuccess)="onCodeResult($event)"
   ></zxing-scanner>
 </p-card>
 
-<p-card>
+<p-card
+  [style]="{ height: '50%', width: '50%' }"
+  class="flex align-items-center justify-content-center"
+>
   <section class="results" *ngIf="qrResultString">
     <div>
       <small>Result</small>
