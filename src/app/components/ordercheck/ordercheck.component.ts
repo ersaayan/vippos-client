@@ -31,8 +31,8 @@ export class OrdercheckComponent {
   cols!: Column[];
   ngOnInit() {
     this.cols = [
-      { field: 'StokKodu', header: 'Stok Kodu' },
-      { field: 'TOTAL', header: 'Toplam' },
+      { field: 'UrunAdi', header: 'Stok Kodu' },
+      { field: 'Miktar', header: 'Toplam' },
     ];
   }
   onCodeResult(resultString: string) {
