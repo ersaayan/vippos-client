@@ -4,10 +4,16 @@ import { BarcodeFormat } from '@zxing/library';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { TableModule } from 'primeng/table';
+
+interface Column {
+  field: string;
+  header: string;
+}
 @Component({
   selector: 'app-ordercheck',
   standalone: true,
-  imports: [ZXingScannerModule, CardModule, CommonModule],
+  imports: [ZXingScannerModule, CardModule, CommonModule, TableModule],
   templateUrl: './ordercheck.component.html',
   styleUrl: './ordercheck.component.css',
 })
@@ -21,8 +27,14 @@ export class OrdercheckComponent {
     BarcodeFormat.CODE_128,
     BarcodeFormat.DATA_MATRIX,
   ];
-  qrResultString!: string;
-
+  qrResultString!: any[];
+  cols!: Column[];
+  ngOnInit() {
+    this.cols = [
+      { field: 'StokKodu', header: 'Stok Kodu' },
+      { field: 'TOTAL', header: 'Toplam' },
+    ];
+  }
   onCodeResult(resultString: string) {
     console.log('Result: ', resultString);
     this.http
