@@ -5,8 +5,8 @@ import { authGuard } from './guards/auth.guard';
 import { LayoutComponent } from './components/layout/layout.component';
 import { DatabaseComponent } from './components/database/database.component';
 import { BarcodeComponent } from './components/barcode/barcode.component';
-import { ImageComponent } from './components/image/image.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { OrdercheckComponent } from './components/ordercheck/ordercheck.component';
 
 export const routes: Routes = [
   {
@@ -41,8 +41,8 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
-        path: 'image',
-        component: ImageComponent,
+        path: 'scanner',
+        component: OrdercheckComponent,
         canActivate: [authGuard],
         pathMatch: 'full',
       },

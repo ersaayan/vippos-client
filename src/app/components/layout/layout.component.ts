@@ -47,9 +47,9 @@ export class LayoutComponent implements OnInit {
         route: ['/barcode'],
       },
       {
-        label: 'Product Image Editor',
+        label: 'Order Verification',
         icon: 'pi pi-images',
-        route: ['/image'],
+        route: ['/scanner'],
       },
     ];
   }
