@@ -3,6 +3,7 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { BarcodeFormat } from '@zxing/library';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-ordercheck',
   standalone: true,
@@ -11,6 +12,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './ordercheck.component.css',
 })
 export class OrdercheckComponent {
+  constructor(private http: HttpClient) {}
+  sipariskalemleri!: any[];
+
   allowedFormats = [
     BarcodeFormat.QR_CODE,
     BarcodeFormat.EAN_13,
@@ -19,11 +23,14 @@ export class OrdercheckComponent {
   ];
   qrResultString!: string;
 
-  clearResult(): void {
-    this.qrResultString = '';
-  }
-
   onCodeResult(resultString: string) {
-    this.qrResultString = resultString;
+    console.log('Result: ', resultString);
+    this.http
+      .get<any>(
+        `https://pos.vipcase.com.tr/flask/siparis_kalemleri/${resultString}`
+      )
+      .subscribe((data) => {
+        this.qrResultString = data;
+      });
   }
 }
