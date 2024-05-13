@@ -35,7 +35,7 @@ export class DashboardComponent implements OnInit {
 
   gununEnCokSatanUrunu: any;
 
-  haftalikToplamSiparisSayisi: any;
+  dunToplamSiparisSayisi: any;
 
   gunlukToplamSiparisSayisi: any;
 
@@ -45,13 +45,19 @@ export class DashboardComponent implements OnInit {
 
   gunlukToplamSatisSayisi: any;
 
+  dunToplamSatisSayisi: any;
+
   haftalikToplamCiro: any;
 
   gunlukToplamCiro: any;
 
+  dunToplamCiro: any;
+
   dünSatısVeri: number[] = [];
 
   bugünSatısVeri: number[] = [];
+
+  saatVerileri: string[] = []
 
   data: any;
 
@@ -70,13 +76,15 @@ export class DashboardComponent implements OnInit {
     this.getBugünSatısVeri();
     this.getHaftaninEnCokSatanUrunleri();
     this.getGununEnCokSatanUrunu();
-    //this.getHaftalikToplamSiparisSayisi();
+    this.getDunToplamSiparisSayisi();
     this.getGunlukToplamSiparisSayisi();
     //this.getGunlukToplamKargolananSiparisSayisi();
     //this.getHaftalikToplamSatisSayisi();
     this.getGunlukToplamSatisSayisi();
+    this.getDunToplamSatisSayisi();
     //this.getHaftalikToplamCiro();
     this.getGunlukToplamCiro();
+    this.getDunToplamCiro();
     this.cols = [
       { field: 'StokKodu', header: 'Stok Kodu' },
       { field: 'TOTAL', header: 'Toplam' },
@@ -173,11 +181,11 @@ export class DashboardComponent implements OnInit {
       });
   }
 
-  getHaftalikToplamSiparisSayisi() {
+  getDunToplamSiparisSayisi() {
     this.http
-      .get<any>('https://pos.vipcase.com.tr/flask/haftalik_toplam_siparis_sayisi')
+      .get<any>('https://pos.vipcase.com.tr/flask/dun_toplam_siparis_sayisi')
       .subscribe((data) => {
-        this.haftalikToplamSiparisSayisi = data;
+        this.dunToplamSiparisSayisi = data.TOTAL;
       });
   }
 
@@ -213,6 +221,14 @@ export class DashboardComponent implements OnInit {
       });
   }
 
+  getDunToplamSatisSayisi() {
+    this.http
+      .get<any>('https://pos.vipcase.com.tr/flask/dun_toplam_satis_sayisi')
+      .subscribe((data) => {
+        this.dunToplamSatisSayisi = data.TOTAL;
+      });
+  }
+
   getHaftalikToplamCiro() {
     this.http
       .get<any>('https://pos.vipcase.com.tr/flask/haftalik_toplam_ciro')
@@ -229,12 +245,20 @@ export class DashboardComponent implements OnInit {
       });
   }
 
+  getDunToplamCiro() {
+    this.http
+      .get<any>('https://pos.vipcase.com.tr/flask/dun_toplam_ciro')
+      .subscribe((data) => {
+        this.dunToplamCiro = data;
+      });
+  }
+
   getDünSatısVeri() {
     this.http
-      .get<any>('https://pos.vipcase.com.tr/flask/dün-yapılan-satışlar-grafiği')
+      .get<any>('https://pos.vipcase.com.tr/flask/dun-yapılan-satışlar-grafiği')
       .subscribe((data) => {
         for (const veri of data) {
-          this.dünSatısVeri.push(veri.Toplam_Miktar);
+          this.dünSatısVeri.push(veri.Toplam_Ciro);
         }
         console.log(this.dünSatısVeri);
       });
@@ -245,7 +269,7 @@ export class DashboardComponent implements OnInit {
       .get<any>('https://pos.vipcase.com.tr/flask/bugün-yapılan-satışlar-grafiği')
       .subscribe((data) => {
         for (const veri of data) {
-          this.bugünSatısVeri.push(veri.Toplam_Miktar);
+          this.bugünSatısVeri.push(veri.Toplam_Ciro);
         }
         console.log(this.bugünSatısVeri);
       });
