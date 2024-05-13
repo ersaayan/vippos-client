@@ -1,1 +1,16 @@
-<zxing-scanner [formats]="allowedFormats"></zxing-scanner>
+<p-card header="Barcode Tarayıcı" [style]="{ height: '50%', width: '50%' }">
+  <zxing-scanner
+    [formats]="allowedFormats"
+    (scanSuccess)="onCodeResult($event)"
+  ></zxing-scanner>
+</p-card>
+
+<p-card>
+  <section class="results" *ngIf="qrResultString">
+    <div>
+      <small>Result</small>
+      <strong>{{ qrResultString }}</strong>
+    </div>
+    <button mat-icon-button (click)="clearResult()">&times;</button>
+  </section>
+</p-card>
