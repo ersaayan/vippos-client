@@ -1,7 +1,7 @@
 <br />
 <p-card header="Anlık Veriler">
-  <div class="grid">
-    <div class="col-12 lg:col-6 xl:col-3">
+  <div class="p-grid">
+    <div class="p-col-12 p-md-6 p-xl-3">
       <div class="card-container">
         <p-card [style]="{ background: '#353e4b' }">
           <div class="card mb-0">
@@ -26,13 +26,13 @@
         </p-card>
       </div>
     </div>
-    <div class="col-10 lg:col-6 xl:col-3">
+    <div class="p-col-12 p-md-6 p-xl-3">
       <div class="card-container">
         <p-card [style]="{ background: '#353e4b' }">
           <div class="card mb-0">
             <div class="flex justify-content-between mb-3">
               <div>
-                <span class="block text-500 font-medium">Toplam Sipariş</span>
+                <span class="block text-500 font-medium">Toplam Sipariş </span>
                 <div class="text-900 font-medium text-xl">
                   Bugün = {{ gunlukToplamSiparisSayisi }}
                 </div>
@@ -51,7 +51,7 @@
         </p-card>
       </div>
     </div>
-    <div class="col-12 lg:col-6 xl:col-3">
+    <div class="p-col-12 p-md-6 p-xl-3">
       <div class="card-container">
         <p-card [style]="{ background: '#353e4b' }">
           <div class="card mb-0">
@@ -78,7 +78,7 @@
         </p-card>
       </div>
     </div>
-    <div class="col-12 lg:col-6 xl:col-3">
+    <div class="p-col-12 p-md-6 p-xl-3">
       <div class="card-container">
         <p-card [style]="{ background: '#353e4b' }">
           <div class="card mb-0">
@@ -112,14 +112,14 @@
 </p-card>
 <br />
 <p-card [style]="{ background: '#353e4b' }">
-  <div class="grid">
-    <div class="col flex align-items-left justify-content-left">
+  <div class="p-grid">
+    <div class="p-col">
       <p-card header="Haftanın En Çok Satan Ürünleri">
         <span class="text-500 font-medium">Son 7 günlük veri. </span>
         <p-table
           [columns]="cols"
           [value]="haftaninEnCokSatanUrunleri"
-          [tableStyle]="{ 'min-width': '50rem' }"
+          [responsive]="true"
         >
           <ng-template pTemplate="header" let-columns>
             <tr>
@@ -139,7 +139,7 @@
       </p-card>
     </div>
 
-    <div class="col flex align-items-right justify-content-right">
+    <div class="p-col">
       <p-chart
         type="line"
         [data]="tablo"
@@ -150,74 +150,7 @@
           background: #1f2937;
           border-style: hidden;
         "
-      />
+      ></p-chart>
     </div>
   </div>
 </p-card>
-<!-- <div class="col-12 lg:col-6 xl:col-3">
-      <div class="card-container">
-        <p-card [style]="{ background: '#353e4b' }">
-          <div class="card">
-            <p-meterGroup [value]="value" labelPosition="start">
-              <ng-template pTemplate="label">
-                <div class="flex flex-wrap gap-1">
-                  <ng-container
-                    (yıldız)ngFor="let meterItem of value; let index = index"
-                  >
-                    <div class="flex justify-content-between gap-1">
-                      <div class="flex flex-column gap-1">
-                        <span class="text-secondary text-s">{{
-                          meterItem.label
-                        }}</span>
-                        <span class="font-bold text-m"
-                          >{{ meterItem.value }}%</span
-                        >
-                      </div>
-                      <span
-                        class="w-2rem h-2rem border-circle inline-flex justify-content-center align-items-center text-center"
-                        [style]="{
-                          'background-color': meterItem.color1,
-                          color: '#ffffff'
-                        }"
-                      >
-                        <i [class]="meterItem.icon"></i>
-                      </span>
-                    </div>
-                  </ng-container>
-                </div>
-              </ng-template>
-              <ng-template
-                pTemplate="meter"
-                let-value
-                let-class="class"
-                let-width="size"
-              >
-                <span
-                  [class]="class"
-                  [style]="{
-                    background:
-                      'linear-gradient(to right, ' +
-                      value.color1 +
-                      ', ' +
-                      value.color2 +
-                      ')',
-                    width: width
-                  }"
-                ></span>
-              </ng-template>
-              <ng-template pTemplate="start" let-totalPercent="totalPercent">
-                <div class="flex justify-content-between relative">
-                  <span>Kargolanan Sipariş / Toplam Sipariş</span>
-                  <span
-                    [style]="{ width: totalPercent + '%' }"
-                    class="absolute text-right"
-                    >{{ totalPercent }}%</span
-                  >
-                  <span class="font-small">1000</span>
-                </div>
-              </ng-template>
-            </p-meterGroup>
-          </div>
-        </p-card>
-      </div>
-    </div>-->
