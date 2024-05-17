@@ -1,7 +1,7 @@
 <br />
-<p-card header="Anlık Veriler" [style]="{ background: '#353e4b' }">
-  <div>
-    <div class="card-container">
+<p-card header="Anlık Veriler" [style]="{ background: '#353e4b', flex: '1'  }">
+  <div style="display: flex; flex-wrap: wrap;">
+    <div class="card-container" style="flex-grow: 1;" >
       <p-card [style]="{ background: '#353e4b' }">
         <div class="card mb-0">
           <div class="flex justify-content-between mb-3">
@@ -25,7 +25,7 @@
       </p-card>
     </div>
 
-    <div class="card-container">
+    <div class="card-container" style="flex-grow: 1;">
       <p-card [style]="{ background: '#353e4b' }">
         <div class="card mb-0">
           <div class="flex justify-content-between mb-3">
@@ -49,7 +49,7 @@
       </p-card>
     </div>
 
-    <div class="card-container">
+    <div class="card-container" style="flex-grow: 1;">
       <p-card [style]="{ background: '#353e4b' }">
         <div class="card mb-0">
           <div class="flex justify-content-between mb-3">
@@ -75,7 +75,7 @@
       </p-card>
     </div>
 
-    <div class="card-container">
+    <div class="card-container" style="flex-grow: 1;">
       <p-card [style]="{ background: '#353e4b' }">
         <div class="card mb-0">
           <div class="flex justify-content-between mb-3">
@@ -106,9 +106,9 @@
   </div>
 </p-card>
 <br />
-<p-card [style]="{ background: '#353e4b' }">
-  <div class="p-grid">
-    <div class="p-col-12 p-md-6">
+<p-card [style]="{ background: '#353e4b', flex: '1' }">
+  <div class="p-grid" style="display: flex; flex-wrap: wrap;">
+    <div class="p-col-12 p-md-6" style="flex-grow: 1;">
       <p-card header="Haftanın En Çok Satan Ürünleri">
         <span class="text-500 font-medium">Son 7 günlük veri. </span>
         <p-table
@@ -133,8 +133,7 @@
         </p-table>
       </p-card>
     </div>
-
-    <div class="p-col-12 p-md-6">
+    <div class="p-col-12 p-md-6" style="flex-grow: 1;">
       <p-chart
         type="line"
         [data]="tablo"
@@ -149,3 +148,6 @@
     </div>
   </div>
 </p-card>
+
+
+
