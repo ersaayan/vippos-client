@@ -1,1 +1,77 @@
-<p>login works!</p>
+<div
+  class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden"
+>
+  <div class="flex flex-column align-items-center justify-content-center">
+    <div
+      style="
+        border-radius: 56px;
+        padding: 0.3rem;
+        background: linear-gradient(
+          180deg,
+          var(--primary-color) 10%,
+          rgba(33, 150, 243, 0) 30%
+        );
+      "
+    >
+      <div
+        class="w-full surface-card py-8 px-5 sm:px-8"
+        style="border-radius: 53px"
+      >
+        <div class="text-center mb-5">
+          <img src="assets/avatar.png" alt="Image" height="50" class="mb-3" />
+          <div class="text-900 text-3xl font-medium mb-3">
+            Welcome to VIP-POS
+          </div>
+          <span class="text-600 font-medium">Sign in to continue</span>
+        </div>
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
+          <div class="field">
+            <label class="email">E-Mail</label>
+            <input
+              type="text"
+              pInputText
+              formControlName="email"
+              class="w-full"
+              name="email"
+              placeholder="example@domain.com"
+            />
+            <small
+              *ngIf="email?.invalid && (email?.dirty || email?.touched)"
+              class="block p-error"
+            >
+              <div *ngIf="email?.errors?.['required']">Email is required</div>
+              <div *ngIf="email?.errors?.['email']">Email should be valid</div>
+            </small>
+          </div>
+          <div class="field">
+            <label class="password">Password</label>
+            <input
+              type="password"
+              pInputText
+              formControlName="password"
+              class="w-full"
+              name="password"
+              placeholder="pa$$w0rd"
+            />
+            <small
+              *ngIf="
+                password?.invalid && (password?.dirty || password?.touched)
+              "
+              class="block p-error"
+            >
+              <div *ngIf="password?.errors?.['required']">
+                Password is required
+              </div>
+            </small>
+          </div>
+          <p-button
+            label="Log In"
+            [raised]="true"
+            styleClass="w-full"
+            type="submit"
+          ></p-button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
