@@ -4,9 +4,3 @@
 @import "assets/demo/styles/flags/flags.css";
 @import "assets/demo/styles/badges.css";
 @import "assets/demo/styles/code.css";
-html,
-body {
-  font-size: small;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  background-color: lightgray;
-}

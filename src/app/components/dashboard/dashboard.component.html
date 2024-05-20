@@ -1,74 +1,228 @@
+<br />
 <div class="grid">
-  <div class="col-12 lg:col-6 xl:col-3">
+  <div class="col-12 lg:col-4 xl:col-2-4">
     <div class="card mb-0">
       <div class="flex justify-content-between mb-3">
         <div>
-          <span class="block text-500 font-medium mb-3">Orders</span>
-          <div class="text-900 font-medium text-xl">152</div>
+          <span class="block text-500 font-medium mb-3">Toplam Ciro</span>
+          <div class="text-900 font-medium text-xl">₺4.000</div>
         </div>
         <div
           class="flex align-items-center justify-content-center bg-blue-100 border-round"
           [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
         >
-          <i class="pi pi-shopping-cart text-blue-500 text-xl"></i>
+          <i class="pi pi-money-bill text-blue-500 text-xl"></i>
         </div>
       </div>
-      <span class="text-green-500 font-medium">24 new </span>
-      <span class="text-500">since last visit</span>
+      <span class="text-green-500 font-medium">Gün </span>
+      <span class="text-500">başlangıcından itibaren.</span>
     </div>
   </div>
-  <div class="col-12 lg:col-6 xl:col-3">
+  <div class="col-12 lg:col-4 xl:col-2-4">
     <div class="card mb-0">
       <div class="flex justify-content-between mb-3">
         <div>
-          <span class="block text-500 font-medium mb-3">Revenue</span>
-          <div class="text-900 font-medium text-xl">$2.100</div>
+          <span class="block text-500 font-medium mb-3">Toplam Kar</span>
+          <div class="text-900 font-medium text-xl">₺2.100</div>
         </div>
         <div
           class="flex align-items-center justify-content-center bg-orange-100 border-round"
           [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
         >
-          <i class="pi pi-map-marker text-orange-500 text-xl"></i>
+          <i class="pi pi-turkish-lira text-orange-500 text-xl"></i>
         </div>
       </div>
-      <span class="text-green-500 font-medium">%52+ </span>
-      <span class="text-500">since last week</span>
+      <span class="text-green-500 font-medium">Gün </span>
+      <span class="text-500">başlangıcından itibaren.</span>
     </div>
   </div>
-  <div class="col-12 lg:col-6 xl:col-3">
+  <div class="col-12 lg:col-4 xl:col-2-4">
     <div class="card mb-0">
       <div class="flex justify-content-between mb-3">
         <div>
-          <span class="block text-500 font-medium mb-3">Customers</span>
-          <div class="text-900 font-medium text-xl">28441</div>
+          <span class="block text-500 font-medium mb-3">Toplam Sipariş</span>
+          <div class="text-900 font-medium text-xl">122</div>
         </div>
         <div
           class="flex align-items-center justify-content-center bg-cyan-100 border-round"
           [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
         >
-          <i class="pi pi-inbox text-cyan-500 text-xl"></i>
+          <i class="pi pi-shopping-cart text-cyan-500 text-xl"></i>
         </div>
       </div>
-      <span class="text-green-500 font-medium">520 </span>
-      <span class="text-500">newly registered</span>
+      <span class="text-green-500 font-medium">Gün </span>
+      <span class="text-500">başlangıcından itibaren.</span>
     </div>
   </div>
-  <div class="col-12 lg:col-6 xl:col-3">
+  <div class="col-12 lg:col-4 xl:col-2-4">
     <div class="card mb-0">
       <div class="flex justify-content-between mb-3">
         <div>
-          <span class="block text-500 font-medium mb-3">Comments</span>
-          <div class="text-900 font-medium text-xl">152 Unread</div>
+          <span class="block text-500 font-medium mb-3"
+            >Toplam Satılan Ürün</span
+          >
+          <div class="text-900 font-medium text-xl">152</div>
         </div>
         <div
           class="flex align-items-center justify-content-center bg-purple-100 border-round"
           [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
         >
-          <i class="pi pi-comment text-purple-500 text-xl"></i>
+          <i class="pi pi-cart-arrow-down text-purple-500 text-xl"></i>
         </div>
       </div>
-      <span class="text-green-500 font-medium">85 </span>
-      <span class="text-500">responded</span>
+      <span class="text-green-500 font-medium">Gün </span>
+      <span class="text-500">başlangıcından itibaren.</span>
+    </div>
+  </div>
+  <div class="col-12 lg:col-4 xl:col-2-4">
+    <div class="card mb-0">
+      <div class="flex justify-content-between mb-3">
+        <div>
+          <span class="block text-500 font-medium mb-3">En çok satan ürün</span>
+          <div class="text-900 font-medium text-xl">Pudra</div>
+        </div>
+        <div
+          class="flex align-items-center justify-content-center bg-purple-100 border-round"
+          [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
+        >
+          <i class="pi pi-trophy text-purple-500 text-xl"></i>
+        </div>
+      </div>
+      <span class="text-green-500 font-medium">15 </span>
+      <span class="text-500">adet satıldı.</span>
+    </div>
+  </div>
+  <div class="col-12 xl:col-6">
+    <div class="card">
+      <h3>Satışa Genel Bakış</h3>
+      <p-chart
+        type="line"
+        [data]="chartData"
+        [options]="chartOptions"
+      ></p-chart>
+    </div>
+  </div>
+  <div class="col-12 xl:col-6">
+    <div class="card">
+      <div class="flex justify-content-between align-items-center mb-5">
+        <h3>En Çok Satan 10 Ürün</h3>
+      </div>
+      <ul class="list-none p-0 m-0">
+        <li
+          class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
+        >
+          <div>
+            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Pudra</span>
+          </div>
+          <div class="mt-2 md:mt-0 flex align-items-center">
+            <span class="text-orange-500 ml-3 font-medium">367 adet</span>
+          </div>
+        </li>
+        <li
+          class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
+        >
+          <div>
+            <span class="text-900 font-medium mr-2 mb-1 md:mb-0"
+              >Watch 3 Active / KORDON</span
+            >
+          </div>
+          <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+            <span class="text-cyan-500 ml-3 font-medium">160 adet</span>
+          </div>
+        </li>
+        <li
+          class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
+        >
+          <div>
+            <span class="text-900 font-medium mr-2 mb-1 md:mb-0"
+              >Tab A9 Plus / EKRAN KORUYUCU</span
+            >
+          </div>
+          <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+            <span class="text-pink-500 ml-3 font-medium">73 adet</span>
+          </div>
+        </li>
+        <li
+          class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
+        >
+          <div>
+            <span class="text-900 font-medium mr-2 mb-1 md:mb-0"
+              >EGE \ Apple iPhone 11 / Siyah</span
+            >
+          </div>
+          <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+            <span class="text-green-500 ml-3 font-medium">72 adet</span>
+          </div>
+        </li>
+        <li
+          class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
+        >
+          <div>
+            <span class="text-900 font-medium mr-2 mb-1 md:mb-0"
+              >EGE \ Apple iPhone 13 / Siyah</span
+            >
+          </div>
+          <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+            <span class="text-purple-500 ml-3 font-medium">69 adet</span>
+          </div>
+        </li>
+        <li
+          class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
+        >
+          <div>
+            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">SİYAH</span>
+          </div>
+          <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+            <span class="text-teal-500 ml-3 font-medium">63 adet</span>
+          </div>
+        </li>
+        <li
+          class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
+        >
+          <div>
+            <span class="text-900 font-medium mr-2 mb-1 md:mb-0"
+              >ANTİŞOK TABLET KILIFI / TAB A9 PLUS</span
+            >
+          </div>
+          <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+            <span class="text-red-500 ml-3 font-medium">52 adet</span>
+          </div>
+        </li>
+        <li
+          class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
+        >
+          <div>
+            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">YEŞİL</span>
+          </div>
+          <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+            <span class="text-yellow-500 ml-3 font-medium">51 adet</span>
+          </div>
+        </li>
+        <li
+          class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
+        >
+          <div>
+            <span class="text-900 font-medium mr-2 mb-1 md:mb-0"
+              >EGE \ Apple iPhone 13 / Mavi</span
+            >
+          </div>
+          <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+            <span class="text-indigo-500 ml-3 font-medium">47 adet</span>
+          </div>
+        </li>
+        <li
+          class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
+        >
+          <div>
+            <span class="text-900 font-medium mr-2 mb-1 md:mb-0"
+              >MARA / Redmi Note 12 Pro / Siyah</span
+            >
+          </div>
+          <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+            <span class="text-black-500 ml-3 font-medium">41 adet</span>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </div>

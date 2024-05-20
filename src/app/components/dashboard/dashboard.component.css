@@ -1,0 +1,7 @@
+/* Custom CSS for 2-4 columns */
+@media (min-width: 75em) {
+  .xl\:col-2-4 {
+    flex: 0 0 auto;
+    width: 20%;
+  }
+}
