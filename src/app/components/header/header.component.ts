@@ -31,6 +31,11 @@ export class HeaderComponent implements OnInit {
         icon: 'pi pi-home',
         route: ['/home'],
       },
+      {
+        label: 'Generator',
+        icon: 'pi pi-check-square',
+        route: ['/generator'],
+      },
     ];
   }
 }
