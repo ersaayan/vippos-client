@@ -25,6 +25,7 @@ import { CaseBrandService } from '../../services/case-brand.service';
 import { CaseModelVariationsService } from '../../services/case-model-variations.service';
 import { PhoneService } from '../../services/phone.service';
 import { PhoneResponse } from '../../interfaces/phone-response';
+import { StockCartResponse } from '../../interfaces/stock-cart-response';
 
 interface Column {
   field: string;
@@ -65,6 +66,10 @@ export class GeneratorComponent implements OnInit {
   phone: PhoneResponse[] = [];
 
   selectedPhone: PhoneResponse[] = [];
+
+  stockKarts: StockCartResponse[] = [];
+
+  selectedStockKarts: StockCartResponse[] = [];
 
   caseModelVariations: { modelVariation: string }[] = [];
 
