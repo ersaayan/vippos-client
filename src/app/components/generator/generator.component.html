@@ -1,1 +1,310 @@
-<p>generator works!</p>
+<br />
+<div class="grid">
+  <div class="col-12 xl:col-4">
+    <form [formGroup]="stokKart">
+      <div class="card">
+        <div class="field">
+          <label class="text">Case Brand</label>
+          <span class="spacer"></span>
+          <p-dropdown
+            class="full-width"
+            [options]="caseBrands"
+            formControlName="selectedBrands"
+            placeholder="Select Brand"
+            optionLabel="brandName"
+            [filter]="true"
+            filterBy="brandName"
+            [showClear]="true"
+            [checkmark]="true"
+          />
+        </div>
+        <div class="field">
+          <label class="text">Case Model Variations</label>
+          <span class="spacer"></span>
+          <p-multiSelect
+            class="full-width"
+            [options]="caseModelVariations"
+            formControlName="selectedCaseModelVariations"
+            optionLabel="modelVariation"
+            placeholder="Select Variations"
+            [filter]="true"
+            filterBy="modelVariation"
+            [showClear]="true"
+            display="chip"
+          />
+        </div>
+        <div class="field">
+          <label class="file">Case Image</label>
+          <input
+            type="file"
+            pInputText
+            formControlName="CaseModelImage"
+            class="w-full"
+            name="CaseModelImage"
+            accept="image/*"
+          />
+        </div>
+        <div class="field">
+          <label class="text">Case Model Title</label>
+          <input
+            type="text"
+            pInputText
+            formControlName="CaseModelTitle"
+            class="w-full"
+            name="CaseModelTitle"
+            placeholder="Magsafe"
+          />
+        </div>
+        <div class="field">
+          <label class="text">Description</label>
+          <input
+            type="text"
+            pInputText
+            formControlName="Description"
+            class="w-full"
+            name="Description"
+            placeholder="Kahve rengi kılıf"
+          />
+        </div>
+        <div class="field">
+          <label class="text">Barcode</label>
+          <input
+            type="text"
+            pInputText
+            formControlName="Barcode"
+            class="w-full"
+            name="Barcode"
+            placeholder="84675689"
+          />
+        </div>
+        <div class="field">
+          <label class="text">Cost</label>
+          <input
+            type="text"
+            pInputText
+            formControlName="Cost"
+            class="w-full"
+            name="Cost"
+            placeholder="2000"
+          />
+        </div>
+        <div class="field">
+          <label class="text">Quantity</label>
+          <input
+            type="text"
+            pInputText
+            formControlName="Quantity"
+            class="w-full"
+            name="Quantity"
+            placeholder="10000"
+          />
+        </div>
+        <div class="field">
+          <label class="text">Sale Price 1</label>
+          <input
+            type="text"
+            pInputText
+            formControlName="SatisFiyat1"
+            class="w-full"
+            name="SatisFiyat1"
+            placeholder="0.9"
+          />
+        </div>
+        <div class="field">
+          <label class="text">Sale Price 2</label>
+          <input
+            type="text"
+            pInputText
+            formControlName="SatisFiyat2"
+            class="w-full"
+            name="SatisFiyat2"
+            placeholder="0.7"
+          />
+        </div>
+        <div class="field">
+          <label class="text">Sale Price 3</label>
+          <input
+            type="text"
+            pInputText
+            formControlName="SatisFiyat3"
+            class="w-full"
+            name="SatisFiyat3"
+            placeholder="0.5"
+          />
+        </div>
+        <div class="field">
+          <label class="text">Sale Price 4</label>
+          <input
+            type="text"
+            pInputText
+            formControlName="SatisFiyat4"
+            class="w-full"
+            name="SatisFiyat4"
+            placeholder="0.3"
+          />
+        </div>
+        <p-button
+          label="Generate"
+          [raised]="true"
+          styleClass="w-full"
+          type="submit"
+        ></p-button>
+      </div>
+    </form>
+  </div>
+  <div class="col-12 xl:col-8">
+    <div class="card">
+      <p-table
+        #dt2
+        [value]="phone"
+        [(selection)]="selectedPhone"
+        dataKey="id"
+        [rows]="18"
+        [showCurrentPageReport]="true"
+        [rowsPerPageOptions]="[18, 30, 40]"
+        [loading]="loading"
+        [paginator]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [globalFilterFields]="['name', 'brand', 'stockCode']"
+        [tableStyle]="{ 'min-width': '75rem' }"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 4rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th style="width: 36%">Brand Model Name</th>
+            <th style="width: 32%">Brand Name</th>
+            <th style="width: 32%">SKU</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th>
+              <p-columnFilter
+                type="text"
+                field="name"
+                matchMode="contains"
+              ></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter
+                type="text"
+                field="brand"
+                matchMode="contains"
+              ></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter
+                type="text"
+                field="stockCode"
+                matchMode="contains"
+              ></p-columnFilter>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-phone>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="phone"></p-tableCheckbox>
+            </td>
+            <td>{{ phone.name }}</td>
+            <td>{{ phone.brand }}</td>
+            <td>{{ phone.stockCode }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5">No products found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  <div class="col-12 xl:col-8">
+    <div class="card">
+      <p-table
+        #dt2
+        [value]="stockKarts"
+        [(selection)]="selectedStockKarts"
+        dataKey="id"
+        [rows]="10"
+        [showCurrentPageReport]="true"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [loading]="loading"
+        [paginator]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [globalFilterFields]="[
+          'CaseBrand',
+          'CaseModelVariations',
+          'CaseModelTitle',
+          'ProductIds',
+          'Description',
+          'Barcode'
+        ]"
+        [tableStyle]="{ 'min-width': '75rem' }"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 4rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th style="width: 20%">Stock Code</th>
+            <th style="width: 19%">Myor Stock Name</th>
+            <th style="width: 19%">İkas Stock Name</th>
+            <th style="width: 14%">Case Model Title</th>
+            <th style="width: 14%">Description</th>
+            <th style="width: 14%">Barcode</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th>
+              <p-columnFilter type="text" field="stockCode"></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter
+                type="text"
+                field="myorStockName"
+              ></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter
+                type="text"
+                field="ikasStockName"
+              ></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter
+                type="text"
+                field="CaseModelTitle"
+              ></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter type="text" field="Description"></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter type="text" field="Barcode"></p-columnFilter>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-stockKarts>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="stockKarts"></p-tableCheckbox>
+            </td>
+            <td>{{ stockKarts.stockCode }}</td>
+            <td>{{ stockKarts.myorStockName }}</td>
+            <td>{{ stockKarts.ikasStockName }}</td>
+            <td>{{ stockKarts.CaseModelTitle }}</td>
+            <td>{{ stockKarts.Description }}</td>
+            <td>{{ stockKarts.Barcode }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5">No Stock Karts found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
