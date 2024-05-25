@@ -26,6 +26,7 @@ import { CaseModelVariationsService } from '../../services/case-model-variations
 import { PhoneService } from '../../services/phone.service';
 import { PhoneResponse } from '../../interfaces/phone-response';
 import { StockCartResponse } from '../../interfaces/stock-cart-response';
+import { StockCartService } from '../../services/stock-cart.service';
 
 interface Column {
   field: string;
@@ -88,7 +89,8 @@ export class GeneratorComponent implements OnInit {
     private fb: FormBuilder,
     private caseBrandService: CaseBrandService,
     private caseModelVariationsService: CaseModelVariationsService,
-    private phoneService: PhoneService
+    private phoneService: PhoneService,
+    private stockCartService: StockCartService
   ) {}
 
   cols!: Column[];
@@ -119,7 +121,23 @@ export class GeneratorComponent implements OnInit {
       }
     );
 
+    this.stockCartService.getStockCartsHistory().subscribe(
+      (stockKarts) => {
+        this.stockKarts = stockKarts;
+      },
+      (error) => {
+        console.error('Error fetching stock carts: ', error);
+      }
+    );
+
     this.cols = [
+      { field: 'id', header: 'Id', customExportHeader: 'phoneIds' },
+      { field: 'name', header: 'Brand Model Name' },
+      { field: 'stockCode', header: 'SKU' },
+      { field: 'brand', header: 'Brand' },
+    ];
+
+    this.stockCols = [
       { field: 'id', header: 'Id', customExportHeader: 'phoneIds' },
       { field: 'name', header: 'Brand Model Name' },
       { field: 'stockCode', header: 'SKU' },
