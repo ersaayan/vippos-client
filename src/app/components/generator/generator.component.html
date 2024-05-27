@@ -1,7 +1,7 @@
 <br />
 <div class="grid">
   <div class="col-12 xl:col-4">
-    <form [formGroup]="stokKart">
+    <form [formGroup]="stokKart" (ngSubmit)="generateStockKart()">
       <div class="card">
         <div class="field">
           <label class="text">Case Brand</label>
@@ -18,6 +18,18 @@
             [checkmark]="true"
           />
         </div>
+        <small
+          #errorRef
+          *ngIf="
+            selectedBrands?.invalid &&
+            (selectedBrands?.dirty || selectedBrands?.touched)
+          "
+          class="block p-error"
+        >
+          <div *ngIf="selectedBrands?.errors?.['required']">
+            Brand is required
+          </div>
+        </small>
         <div class="field">
           <label class="text">Case Model Variations</label>
           <span class="spacer"></span>
@@ -33,17 +45,43 @@
             display="chip"
           />
         </div>
+        <small
+          #errorRef
+          *ngIf="
+            selectedCaseModelVariations?.invalid &&
+            (selectedCaseModelVariations?.dirty ||
+              selectedCaseModelVariations?.touched)
+          "
+          class="block p-error"
+        >
+          <div *ngIf="selectedCaseModelVariations?.errors?.['required']">
+            Variation is required
+          </div>
+        </small>
         <div class="field">
           <label class="file">Case Image</label>
           <input
             type="file"
             pInputText
             formControlName="CaseModelImage"
+            (change)="onFileSelected($event)"
             class="w-full"
             name="CaseModelImage"
-            accept="image/*"
+            accept="image/png, image/jpeg, image/jpg, image/webp"
           />
         </div>
+        <small
+          #errorRef
+          *ngIf="
+            CaseModelImage?.invalid &&
+            (CaseModelImage?.dirty || CaseModelImage?.touched)
+          "
+          class="block p-error"
+        >
+          <div *ngIf="CaseModelImage?.errors?.['required']">
+            Case Image is required
+          </div>
+        </small>
         <div class="field">
           <label class="text">Case Model Title</label>
           <input
@@ -55,6 +93,18 @@
             placeholder="Magsafe"
           />
         </div>
+        <small
+          #errorRef
+          *ngIf="
+            CaseModelTitle?.invalid &&
+            (CaseModelTitle?.dirty || CaseModelTitle?.touched)
+          "
+          class="block p-error"
+        >
+          <div *ngIf="CaseModelTitle?.errors?.['required']">
+            Title is required
+          </div>
+        </small>
         <div class="field">
           <label class="text">Description</label>
           <input
@@ -66,6 +116,17 @@
             placeholder="Kahve rengi kılıf"
           />
         </div>
+        <small
+          #errorRef
+          *ngIf="
+            Description?.invalid && (Description?.dirty || Description?.touched)
+          "
+          class="block p-error"
+        >
+          <div *ngIf="Description?.errors?.['required']">
+            Description is required
+          </div>
+        </small>
         <div class="field">
           <label class="text">Barcode</label>
           <input
@@ -166,16 +227,16 @@
         [paginator]="true"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
         [globalFilterFields]="['name', 'brand', 'stockCode']"
-        [tableStyle]="{ 'min-width': '75rem' }"
+        [tableStyle]="{ 'min-width': '50rem' }"
       >
         <ng-template pTemplate="header">
           <tr>
-            <th style="width: 4rem">
+            <th style="width: 1%">
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
-            <th style="width: 36%">Brand Model Name</th>
-            <th style="width: 32%">Brand Name</th>
-            <th style="width: 32%">SKU</th>
+            <th style="width: 25%">Brand Model Name</th>
+            <th style="width: 25%">Brand Name</th>
+            <th style="width: 25%">SKU</th>
           </tr>
           <tr>
             <th></th>
@@ -214,75 +275,143 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="5">No products found.</td>
+            <td colspan="3">No products found.</td>
           </tr>
         </ng-template>
       </p-table>
     </div>
   </div>
-  <div class="col-12 xl:col-8">
+  <div class="col-12 xl:col-12">
     <div class="card">
       <p-table
         #dt2
         [value]="stockKarts"
         [(selection)]="selectedStockKarts"
         dataKey="id"
-        [rows]="10"
+        [rows]="15"
         [showCurrentPageReport]="true"
-        [rowsPerPageOptions]="[10, 25, 50]"
+        [rowsPerPageOptions]="[15, 30, 50]"
         [loading]="loading"
         [paginator]="true"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
         [globalFilterFields]="[
-          'CaseBrand',
-          'CaseModelVariations',
-          'CaseModelTitle',
-          'ProductIds',
-          'Description',
-          'Barcode'
+          'stockCode',
+          'myorStockName',
+          'ikasStockName',
+          'title',
+          'description',
+          'barcode',
+          'cost',
+          'quantity',
+          'satisFiyat1',
+          'satisFiyat2',
+          'satisFiyat3'
         ]"
         [tableStyle]="{ 'min-width': '75rem' }"
       >
         <ng-template pTemplate="header">
           <tr>
-            <th style="width: 4rem">
+            <th style="width: 1%">
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
-            <th style="width: 20%">Stock Code</th>
-            <th style="width: 19%">Myor Stock Name</th>
-            <th style="width: 19%">İkas Stock Name</th>
-            <th style="width: 14%">Case Model Title</th>
-            <th style="width: 14%">Description</th>
-            <th style="width: 14%">Barcode</th>
+            <th style="width: 18%">Stock Code</th>
+            <th style="width: 20%">Myor Stock Name</th>
+            <th style="width: 20%">Ikas Stock Name</th>
+            <th style="width: 8%">Title</th>
+            <th style="width: 8%">Description</th>
+            <th style="width: 7%">Barcode</th>
+            <th style="width: 3%">Cost</th>
+            <th style="width: 3%">Quantity</th>
+            <th style="width: 3%">Sale Price 1</th>
+            <th style="width: 3%">Sale Price 2</th>
+            <th style="width: 3%">Sale Price 3</th>
+            <th style="width: 3%">Sale Price 4</th>
           </tr>
           <tr>
             <th></th>
             <th>
-              <p-columnFilter type="text" field="stockCode"></p-columnFilter>
+              <p-columnFilter
+                type="text"
+                field="stockCode"
+                matchMode="contains"
+              ></p-columnFilter>
             </th>
             <th>
               <p-columnFilter
                 type="text"
                 field="myorStockName"
+                matchMode="contains"
               ></p-columnFilter>
             </th>
             <th>
               <p-columnFilter
                 type="text"
                 field="ikasStockName"
+                matchMode="contains"
               ></p-columnFilter>
             </th>
             <th>
               <p-columnFilter
                 type="text"
-                field="CaseModelTitle"
+                field="title"
+                matchMode="contains"
               ></p-columnFilter>
             </th>
             <th>
-              <p-columnFilter type="text" field="Description"></p-columnFilter>
+              <p-columnFilter
+                type="text"
+                field="description"
+                matchMode="contains"
+              ></p-columnFilter>
             </th>
             <th>
-              <p-columnFilter type="text" field="Barcode"></p-columnFilter>
+              <p-columnFilter
+                type="text"
+                field="barcode"
+                matchMode="contains"
+              ></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter
+                type="text"
+                field="cost"
+                matchMode="contains"
+              ></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter
+                type="text"
+                field="quantity"
+                matchMode="contains"
+              ></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter
+                type="text"
+                field="satisFiyat1"
+                matchMode="contains"
+              ></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter
+                type="text"
+                field="satisFiyat2"
+                matchMode="contains"
+              ></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter
+                type="text"
+                field="satisFiyat3"
+                matchMode="contains"
+              ></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter
+                type="text"
+                field="satisFiyat4"
+                matchMode="contains"
+              ></p-columnFilter>
             </th>
           </tr>
         </ng-template>
@@ -294,17 +423,47 @@
             <td>{{ stockKarts.stockCode }}</td>
             <td>{{ stockKarts.myorStockName }}</td>
             <td>{{ stockKarts.ikasStockName }}</td>
-            <td>{{ stockKarts.CaseModelTitle }}</td>
-            <td>{{ stockKarts.Description }}</td>
-            <td>{{ stockKarts.Barcode }}</td>
+            <td>{{ stockKarts.title }}</td>
+            <td>{{ stockKarts.description }}</td>
+            <td>{{ stockKarts.barcode }}</td>
+            <td>{{ stockKarts.cost }}</td>
+            <td>{{ stockKarts.quantity }}</td>
+            <td>{{ stockKarts.satisFiyat1 }}</td>
+            <td>{{ stockKarts.satisFiyat2 }}</td>
+            <td>{{ stockKarts.satisFiyat3 }}</td>
+            <td>{{ stockKarts.satisFiyat4 }}</td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="5">No Stock Karts found.</td>
+            <td colspan="12">No stock carts found.</td>
           </tr>
         </ng-template>
       </p-table>
+    </div>
+  </div>
+  <div class="col-12 xl:col-12">
+    <div class="card" id="butondivi">
+      <p-button id="editButton" label="Edit Table" severity="danger">
+        <ng-template pTemplate="icon">
+          <img src="../../../assets/icons/tick.ico" />
+        </ng-template>
+      </p-button>
+      <p-button id="dbButton" label="Save database" severity="help">
+        <ng-template pTemplate="icon">
+          <img src="../../../assets/icons/database.ico" />
+        </ng-template>
+      </p-button>
+      <p-button id="myorButton" label="Download For Myor" severity="success">
+        <ng-template pTemplate="icon">
+          <img src="../../../assets/icons/myor.ico" />
+        </ng-template>
+      </p-button>
+      <p-button id="ikasButton" label="Download For İkas" severity="warning">
+        <ng-template pTemplate="icon">
+          <img src="../../../assets/icons/ikas.ico" />
+        </ng-template>
+      </p-button>
     </div>
   </div>
 </div>

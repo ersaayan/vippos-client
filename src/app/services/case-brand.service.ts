@@ -15,7 +15,6 @@ export class CaseBrandService {
   getCaseBrands(): Observable<CaseBrand[]> {
     return this.http.get<CaseBrand[]>(`${this.apiUrl}/case-brand`).pipe(
       map((response: any[]) => {
-        console.log(response);
         return response.map((item) => ({
           id: item.id,
           brandName: item.brandName,

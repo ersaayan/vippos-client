@@ -27,6 +27,7 @@ import { PhoneService } from '../../services/phone.service';
 import { PhoneResponse } from '../../interfaces/phone-response';
 import { StockCartResponse } from '../../interfaces/stock-cart-response';
 import { StockCartService } from '../../services/stock-cart.service';
+import { StockCartCustomResponse } from '../../interfaces/stock-cart-custom-response';
 
 interface Column {
   field: string;
@@ -62,19 +63,19 @@ interface ExportColumn {
   styleUrl: './generator.component.css',
 })
 export class GeneratorComponent implements OnInit {
+  stokKart!: FormGroup;
+
   caseBrands: { brandName: string }[] = [];
 
   phone: PhoneResponse[] = [];
 
   selectedPhone: PhoneResponse[] = [];
 
-  stockKarts: StockCartResponse[] = [];
+  stockKarts: StockCartCustomResponse[] = [];
 
-  selectedStockKarts: StockCartResponse[] = [];
+  selectedStockKarts: StockCartCustomResponse[] = [];
 
   caseModelVariations: { modelVariation: string }[] = [];
-
-  stokKart!: FormGroup;
 
   loading: boolean = true;
 
@@ -100,14 +101,19 @@ export class GeneratorComponent implements OnInit {
   exportColumns!: ExportColumn[];
   ngOnInit(): void {
     this.stokKart = this.fb.group({
-      selectedBrands: [''],
+      selectedBrands: ['', Validators.required],
+      selectedCaseModelVariations: ['', [Validators.required]],
       CaseModelImage: [File, Validators.required],
-      NumberOfVariations: [1],
-      CaseModelVariations: this.fb.array([]),
       CaseModelTitle: ['', Validators.required],
       phoneIds: [[]],
-      Description: [''],
+      Description: ['', [Validators.required]],
       Barcode: [''],
+      Quantity: [''],
+      Cost: [''],
+      SatisFiyat1: [''],
+      SatisFiyat2: [''],
+      SatisFiyat3: [''],
+      SatisFiyat4: [''],
     });
 
     this.phoneService.getPhones().subscribe(
@@ -138,10 +144,20 @@ export class GeneratorComponent implements OnInit {
     ];
 
     this.stockCols = [
-      { field: 'id', header: 'Id', customExportHeader: 'phoneIds' },
-      { field: 'name', header: 'Brand Model Name' },
+      { field: 'id', header: 'Id', customExportHeader: 'stockCartIds' },
+      { field: 'caseImage', header: 'Case Image' },
       { field: 'stockCode', header: 'SKU' },
-      { field: 'brand', header: 'Brand' },
+      { field: 'myorStockName', header: 'Myor Stock Name' },
+      { field: 'ikasStockName', header: 'Ikas Stock Name' },
+      { field: 'title', header: 'Title' },
+      { field: 'description', header: 'Description' },
+      { field: 'cost', header: 'Cost' },
+      { field: 'quantity', header: 'Quantity' },
+      { field: 'barcode', header: 'Barcode' },
+      { field: 'satisFiyat1', header: 'Satis Fiyat 1' },
+      { field: 'satisFiyat2', header: 'Satis Fiyat 2' },
+      { field: 'satisFiyat3', header: 'Satis Fiyat 3' },
+      { field: 'satisFiyat4', header: 'Satis Fiyat 4' },
     ];
 
     this.caseBrandService.getCaseBrands().subscribe((data) => {
@@ -162,6 +178,54 @@ export class GeneratorComponent implements OnInit {
     }));
   }
 
+  get selectedBrands() {
+    return this.stokKart.get('selectedBrands');
+  }
+
+  get selectedCaseModelVariations() {
+    return this.stokKart.get('selectedCaseModelVariations');
+  }
+
+  get CaseModelImage() {
+    return this.stokKart.get('CaseModelImage');
+  }
+
+  get CaseModelTitle() {
+    return this.stokKart.get('CaseModelTitle');
+  }
+
+  get Description() {
+    return this.stokKart.get('Description');
+  }
+
+  get Barcode() {
+    return this.stokKart.get('Barcode');
+  }
+
+  get Quantity() {
+    return this.stokKart.get('Quantity');
+  }
+
+  get Cost() {
+    return this.stokKart.get('Cost');
+  }
+
+  get SatisFiyat1() {
+    return this.stokKart.get('SatisFiyat1');
+  }
+
+  get SatisFiyat2() {
+    return this.stokKart.get('SatisFiyat2');
+  }
+
+  get SatisFiyat3() {
+    return this.stokKart.get('SatisFiyat3');
+  }
+
+  get SatisFiyat4() {
+    return this.stokKart.get('SatisFiyat4');
+  }
+
   onFileSelected(event: any): void {
     if (event.target.files && event.target.files[0]) {
       const file: File = event.target.files[0];
@@ -169,5 +233,60 @@ export class GeneratorComponent implements OnInit {
       this.fileName = this.currentFile.name;
       this.stokKart.get('CaseModelImage')!.setValue(file);
     }
+  }
+
+  generateStockKart() {
+    const form = new FormData();
+    form.append('caseBrand', this.stokKart.get('selectedBrands')!.value);
+    form.append(
+      'caseModelVariation',
+      JSON.stringify(this.stokKart.get('selectedCaseModelVariations')!.value)
+    );
+    let proArry: string[] = [];
+    const phoneIds = this.selectedPhone.map((phone) => phone.id);
+    for (const phoneId of phoneIds) {
+      proArry.push(phoneId);
+    }
+    let proString = JSON.stringify(proArry);
+    form.append('phoneIds', proString);
+    form.append('title', this.stokKart.get('CaseModelTitle')!.value);
+    form.append('description', this.stokKart.get('Description')!.value);
+    form.append('barcode', this.stokKart.get('Barcode')!.value);
+    form.append('cost', this.stokKart.get('Cost')!.value);
+    form.append('quantity', this.stokKart.get('Quantity')!.value);
+    form.append('satisFiyat1', this.stokKart.get('SatisFiyat1')!.value);
+    form.append('satisFiyat2', this.stokKart.get('SatisFiyat2')!.value);
+    form.append('satisFiyat3', this.stokKart.get('SatisFiyat3')!.value);
+    form.append('satisFiyat4', this.stokKart.get('SatisFiyat4')!.value);
+
+    this.stockCartService.generateStockKart(form).subscribe(
+      (response) => {
+        this.phoneService.getPhones().subscribe(
+          (phone) => {
+            this.phone = phone;
+            this.loading = false;
+          },
+          (error) => {
+            console.error('Error fetching products: ', error);
+            this.loading = false;
+          }
+        );
+        // Başarılı olduğunda bir başarılı mesajı gösterebilirsiniz
+        this.matSnacksBar.open('Stock Kart generated successfully', 'Close', {
+          duration: 2000,
+          verticalPosition: 'top',
+          horizontalPosition: 'right',
+        });
+      },
+      (error) => {
+        console.error('Error generating Stock Kart: ', error);
+        // Hata olduğunda bir hata mesajı gösterebilirsiniz
+        this.matSnacksBar.open('Stock Kart generated successfully', 'Close', {
+          duration: 2000,
+          verticalPosition: 'top',
+          horizontalPosition: 'right',
+        });
+      }
+    );
   }
 }

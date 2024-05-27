@@ -19,7 +19,6 @@ export class CaseModelVariationsService {
       )
       .pipe(
         map((response: any[]) => {
-          console.log(response);
           return response.map((item) => ({
             id: item.id,
             modelVariation: item.modelVariation,
