@@ -237,11 +237,12 @@ export class GeneratorComponent implements OnInit {
 
   generateStockKart() {
     const form = new FormData();
-    form.append('caseBrand', this.stokKart.get('selectedBrands')!.value);
-    form.append(
-      'caseModelVariation',
-      JSON.stringify(this.stokKart.get('selectedCaseModelVariations')!.value)
+    const caseBrand = this.stokKart.get('selectedBrands')!.value;
+    form.append('caseBrand', caseBrand);
+    const caseModelVar = JSON.stringify(
+      this.stokKart.get('selectedCaseModelVariations')!.value
     );
+    form.append('caseModelVariation', caseModelVar);
     let proArry: string[] = [];
     const phoneIds = this.selectedPhone.map((phone) => phone.id);
     for (const phoneId of phoneIds) {
@@ -249,6 +250,10 @@ export class GeneratorComponent implements OnInit {
     }
     let proString = JSON.stringify(proArry);
     form.append('phoneIds', proString);
+    const CaseModelImageFile = this.currentFile;
+    if (CaseModelImageFile instanceof File) {
+      form.append('CaseModelImage', CaseModelImageFile);
+    }
     form.append('title', this.stokKart.get('CaseModelTitle')!.value);
     form.append('description', this.stokKart.get('Description')!.value);
     form.append('barcode', this.stokKart.get('Barcode')!.value);
