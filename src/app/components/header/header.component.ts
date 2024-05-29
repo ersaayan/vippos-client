@@ -32,9 +32,34 @@ export class HeaderComponent implements OnInit {
         route: ['/home'],
       },
       {
-        label: 'Generator',
+        label: 'Stock Cart Generator',
         icon: 'pi pi-check-square',
         route: ['/generator'],
+      },
+      {
+        label: 'View & Download Stock Cart',
+        icon: 'pi pi-database',
+        route: ['/database'],
+      },
+      {
+        label: 'Case Brand Generator',
+        icon: 'pi pi-folder-plus',
+        route: ['/brand'],
+      },
+      {
+        label: 'Case Model Generator',
+        icon: 'pi pi-folder-plus',
+        route: ['/model'],
+      },
+      {
+        label: 'Barcode Editor',
+        icon: 'pi pi-barcode',
+        route: ['/barcode'],
+      },
+      {
+        label: 'Export Dashboard',
+        icon: 'pi pi-upload',
+        route: ['/export-dashboard'],
       },
     ];
   }

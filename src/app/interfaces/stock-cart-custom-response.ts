@@ -1,6 +1,7 @@
 export interface StockCartCustomResponse {
   id: string;
   caseImage: string;
+  caseBrand: string;
   stockCode: string;
   myorStockName: string;
   ikasStockName: string;
@@ -13,4 +14,5 @@ export interface StockCartCustomResponse {
   satisFiyat2: string;
   satisFiyat3: string;
   satisFiyat4: string;
+  updatedAt: Date;
 }

@@ -1,7 +1,9 @@
 <br />
 <div class="grid">
+  <p-toast />
+  <p-confirmDialog />
   <div class="col-12 xl:col-4">
-    <form [formGroup]="stokKart" (ngSubmit)="generateStockKart()">
+    <form [formGroup]="stokKart" (ngSubmit)="confirm1($event)">
       <div class="card">
         <div class="field">
           <label class="text">Case Brand</label>
@@ -441,25 +443,43 @@
         </ng-template>
       </p-table>
     </div>
-  </div>
-  <div class="col-12 xl:col-12">
     <div class="card" id="butondivi">
-      <p-button id="editButton" label="Edit Table" severity="danger">
+      <p-button
+        id="editButton"
+        label="Edit Table"
+        severity="danger"
+        (click)="confirm3($event)"
+      >
         <ng-template pTemplate="icon">
           <img src="../../../assets/icons/tick.ico" />
         </ng-template>
       </p-button>
-      <p-button id="dbButton" label="Save database" severity="help">
+      <p-button
+        id="dbButton"
+        label="Save database"
+        severity="help"
+        (click)="confirm2($event)"
+      >
         <ng-template pTemplate="icon">
           <img src="../../../assets/icons/database.ico" />
         </ng-template>
       </p-button>
-      <p-button id="myorButton" label="Download For Myor" severity="success">
+      <p-button
+        id="myorButton"
+        label="Download For Myor"
+        severity="success"
+        (onClick)="downloadMyor()"
+      >
         <ng-template pTemplate="icon">
           <img src="../../../assets/icons/myor.ico" />
         </ng-template>
       </p-button>
-      <p-button id="ikasButton" label="Download For İkas" severity="warning">
+      <p-button
+        id="ikasButton"
+        label="Download For İkas"
+        severity="warning"
+        (onClick)="downloadIkas()"
+      >
         <ng-template pTemplate="icon">
           <img src="../../../assets/icons/ikas.ico" />
         </ng-template>

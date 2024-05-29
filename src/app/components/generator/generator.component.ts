@@ -28,6 +28,10 @@ import { PhoneResponse } from '../../interfaces/phone-response';
 import { StockCartResponse } from '../../interfaces/stock-cart-response';
 import { StockCartService } from '../../services/stock-cart.service';
 import { StockCartCustomResponse } from '../../interfaces/stock-cart-custom-response';
+import { environment } from '../../../environments/environment';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
 
 interface Column {
   field: string;
@@ -58,14 +62,17 @@ interface ExportColumn {
     MatSnackBarModule,
     RippleModule,
     MenubarModule,
+    ToastModule,
+    ConfirmDialogModule,
   ],
   templateUrl: './generator.component.html',
   styleUrl: './generator.component.css',
+  providers: [ConfirmationService, MessageService],
 })
 export class GeneratorComponent implements OnInit {
   stokKart!: FormGroup;
 
-  caseBrands: { brandName: string }[] = [];
+  caseBrands: { brandName: string; id: string }[] = [];
 
   phone: PhoneResponse[] = [];
 
@@ -75,7 +82,7 @@ export class GeneratorComponent implements OnInit {
 
   selectedStockKarts: StockCartCustomResponse[] = [];
 
-  caseModelVariations: { modelVariation: string }[] = [];
+  caseModelVariations: { modelVariation: string; id: string }[] = [];
 
   loading: boolean = true;
 
@@ -91,7 +98,9 @@ export class GeneratorComponent implements OnInit {
     private caseBrandService: CaseBrandService,
     private caseModelVariationsService: CaseModelVariationsService,
     private phoneService: PhoneService,
-    private stockCartService: StockCartService
+    private stockCartService: StockCartService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
   ) {}
 
   cols!: Column[];
@@ -99,6 +108,7 @@ export class GeneratorComponent implements OnInit {
   stockCols!: Column[];
 
   exportColumns!: ExportColumn[];
+
   ngOnInit(): void {
     this.stokKart = this.fb.group({
       selectedBrands: ['', Validators.required],
@@ -161,7 +171,7 @@ export class GeneratorComponent implements OnInit {
     ];
 
     this.caseBrandService.getCaseBrands().subscribe((data) => {
-      this.caseBrands = data.map((x) => ({ brandName: x.brandName }));
+      this.caseBrands = data.map((x) => ({ brandName: x.brandName, id: x.id }));
     });
 
     this.caseModelVariationsService
@@ -169,6 +179,7 @@ export class GeneratorComponent implements OnInit {
       .subscribe((data) => {
         this.caseModelVariations = data.map((x) => ({
           modelVariation: x.modelVariation,
+          id: x.id,
         }));
       });
 
@@ -235,14 +246,61 @@ export class GeneratorComponent implements OnInit {
     }
   }
 
-  generateStockKart() {
+  confirm1(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message:
+        'Telefon tablosundan modelleri seçtiniz mi? Seçmediyseniz işlem yapılamaz.',
+      header: 'Bilgilendirme',
+      icon: 'pi pi-exclamation-triangle',
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      rejectButtonStyleClass: 'p-button-text',
+      accept: () => {
+        setTimeout(() => {
+          this.confirmationService.confirm({
+            target: event.target as EventTarget,
+            message:
+              'Modelin fotoğrafını eklediniz mi? Eklemediyseniz işlem yapılamaz.',
+            header: 'Bilgilendirme',
+            icon: 'pi pi-exclamation-triangle',
+            acceptIcon: 'none',
+            rejectIcon: 'none',
+            rejectButtonStyleClass: 'p-button-text',
+            accept: () => {
+              this.generateStockKart();
+            },
+            reject: () => {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Reddedildi',
+                detail: 'İşlem reddedildi!',
+                life: 3000,
+              });
+            },
+          });
+        }, 300);
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Reddedildi',
+          detail: 'İşlem reddedildi!',
+          life: 3000,
+        });
+      },
+    });
+  }
+
+  private generateStockKart() {
     const form = new FormData();
-    const caseBrand = this.stokKart.get('selectedBrands')!.value;
+    const caseBrand = this.stokKart.get('selectedBrands')!.value.id;
     form.append('caseBrand', caseBrand);
-    const caseModelVar = JSON.stringify(
-      this.stokKart.get('selectedCaseModelVariations')!.value
-    );
-    form.append('caseModelVariation', caseModelVar);
+    const caseModelVarIds = this.stokKart
+      .get('selectedCaseModelVariations')!
+      .value.map((x: any) => x.id);
+    const caseModelVarIdsString = JSON.stringify(caseModelVarIds);
+    form.append('caseModelVariations', caseModelVarIdsString);
     let proArry: string[] = [];
     const phoneIds = this.selectedPhone.map((phone) => phone.id);
     for (const phoneId of phoneIds) {
@@ -252,13 +310,17 @@ export class GeneratorComponent implements OnInit {
     form.append('phoneIds', proString);
     const CaseModelImageFile = this.currentFile;
     if (CaseModelImageFile instanceof File) {
-      form.append('CaseModelImage', CaseModelImageFile);
+      form.append('caseImage', CaseModelImageFile);
     }
-    form.append('title', this.stokKart.get('CaseModelTitle')!.value);
-    form.append('description', this.stokKart.get('Description')!.value);
+    const CaseModelTitle = this.stokKart.get('CaseModelTitle')!.value;
+    form.append('title', CaseModelTitle);
+    const Description = this.stokKart.get('Description')!.value;
+    form.append('description', Description);
     form.append('barcode', this.stokKart.get('Barcode')!.value);
-    form.append('cost', this.stokKart.get('Cost')!.value);
-    form.append('quantity', this.stokKart.get('Quantity')!.value);
+    const Cost = this.stokKart.get('Cost')!.value;
+    form.append('cost', Cost);
+    const Quantity = this.stokKart.get('Quantity')!.value;
+    form.append('quantity', Quantity);
     form.append('satisFiyat1', this.stokKart.get('SatisFiyat1')!.value);
     form.append('satisFiyat2', this.stokKart.get('SatisFiyat2')!.value);
     form.append('satisFiyat3', this.stokKart.get('SatisFiyat3')!.value);
@@ -266,32 +328,153 @@ export class GeneratorComponent implements OnInit {
 
     this.stockCartService.generateStockKart(form).subscribe(
       (response) => {
-        this.phoneService.getPhones().subscribe(
-          (phone) => {
-            this.phone = phone;
-            this.loading = false;
+        this.stockCartService.getStockCartsHistory().subscribe(
+          (stockKarts) => {
+            this.stockKarts = stockKarts;
           },
           (error) => {
-            console.error('Error fetching products: ', error);
-            this.loading = false;
+            console.error('Error fetching stock carts: ', error);
           }
         );
         // Başarılı olduğunda bir başarılı mesajı gösterebilirsiniz
-        this.matSnacksBar.open('Stock Kart generated successfully', 'Close', {
-          duration: 2000,
-          verticalPosition: 'top',
-          horizontalPosition: 'right',
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Oluşturuldu',
+          detail: 'Stock Cart Başarıyla Oluşturuldu',
         });
       },
       (error) => {
         console.error('Error generating Stock Kart: ', error);
         // Hata olduğunda bir hata mesajı gösterebilirsiniz
-        this.matSnacksBar.open('Stock Kart generated successfully', 'Close', {
-          duration: 2000,
-          verticalPosition: 'top',
-          horizontalPosition: 'right',
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Oluşturulamadı',
+          detail: 'Stock Cart Oluşturulamadı',
+          life: 3000,
         });
       }
     );
+  }
+
+  private deleteStockKartsForIdsNotSent() {
+    const ids = this.selectedStockKarts.map((stockKart) => stockKart.id);
+    this.stockCartService.deleteStockKartsForIdsNotSent(ids).subscribe(
+      (response) => {
+        // Stok kart tablosunu yeniden yükleyebilirsiniz
+        this.stockCartService.getStockCartsHistory().subscribe(
+          (stockKarts) => {
+            this.stockKarts = stockKarts;
+          },
+          (error) => {
+            console.error('Error fetching stock carts: ', error);
+          }
+        );
+        // Başarılı bir şekilde silindiğine dair bir mesaj gösterebilirsiniz
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Düzenlendi',
+          detail: 'Stock Kartlar başarıyla düzenlendi!',
+        });
+      },
+      (error) => {
+        console.error('Error deleting Stock Karts: ', error);
+        // Hata olduğunda bir hata mesajı gösterebilirsiniz
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Düzenlenemedi',
+          detail: 'Stock Kartlar düzenlenemedi!',
+          life: 3000,
+        });
+      }
+    );
+  }
+
+  private transferDb() {
+    this.stockCartService.transferDb().subscribe(
+      (response) => {
+        // Stok kart tablosunu yeniden yükleyebilirsiniz
+        this.stockCartService.getStockCartsHistory().subscribe(
+          (stockKarts) => {
+            this.stockKarts = stockKarts;
+          },
+          (error) => {
+            console.error('Error fetching stock carts: ', error);
+          }
+        );
+        // Başarılı bir şekilde transfer edildiğine dair bir mesaj gösterebilirsiniz
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Transfer Edildi',
+          detail: 'Stock Kartlar başarıyla veri tabanına kaydedildi!',
+        });
+      },
+      (error) => {
+        console.error('Error transferring Stock Karts: ', error);
+        // Hata olduğunda bir hata mesajı gösterebilirsiniz
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Transfer Edilemedi',
+          detail: 'Stock Kartlar veri tabanına kaydedilemedi!',
+          life: 3000,
+        });
+      }
+    );
+  }
+
+  downloadIkas() {
+    const apiUrl: string = environment.apiUrl;
+    window.location.href = `${apiUrl}/stock-carts/export-stock-cart-history-ikas`;
+  }
+  downloadMyor() {
+    const apiUrl: string = environment.apiUrl;
+    window.location.href = `${apiUrl}/stock-carts/export-stock-cart-history-myor`;
+  }
+
+  confirm2(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message:
+        'Stok Kart tablosundaki tüm veriler kaydedilecektir. Devam etmek istiyor musunuz? Bu işlem geri alınamaz!',
+      header: 'Bilgilendirme',
+      icon: 'pi pi-exclamation-triangle',
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      rejectButtonStyleClass: 'p-button-text',
+      accept: () => {
+        this.transferDb();
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Reddedildi',
+          detail: 'İşlem reddedildi!',
+          life: 3000,
+        });
+      },
+    });
+  }
+
+  confirm3(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message:
+        'Seçtiğiniz ürünlerin stok kartları oluşturulacaktır. Seçmediğiniz ürünlerin stok kartları silinecektir. Devam etmek istiyor musunuz? Bu işlem geri alınamaz!',
+      header: 'Bilgilendirme',
+      icon: 'pi pi-exclamation-triangle',
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      rejectButtonStyleClass: 'p-button-text',
+      accept: () => {
+        this.deleteStockKartsForIdsNotSent();
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Reddedildi',
+          detail: 'İşlem reddedildi!',
+          life: 3000,
+        });
+      },
+    });
   }
 }
