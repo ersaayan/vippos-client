@@ -30,4 +30,13 @@ export class CaseModelVariationsService {
         })
       );
   }
+
+  generateVariation(data: any): Observable<any> {
+    const body = {
+      modelVariation: data.modelVariation,
+      modelVariationEng: data.modelVariationEng,
+      myorGroupCode: data.myorGroupCode,
+    };
+    return this.http.post(`${this.apiUrl}/case-model-variations`, body);
+  }
 }

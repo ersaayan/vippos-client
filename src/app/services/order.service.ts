@@ -26,13 +26,21 @@ export class OrderService {
             updatedAt: new Date(item.updatedAt),
             orderDetails: item.orderDetail.map((detail: any) => ({
               id: detail.id,
+              orderId: detail.orderId,
               caseImage: detail.stockCart.caseImage,
               brandName: detail.stockCart.CaseBrand.brandName,
               caseModel: detail.stockCart.CaseModelVariation.modelVariationEng,
               phoneName: detail.stockCart.Phone.name,
+              label:
+                detail.stockCart.Phone.name.replace('Redmi Note', 'RM-Note') +
+                '-' +
+                detail.stockCart.CaseModelVariation.modelVariation +
+                ' ' +
+                detail.stockCart.CaseBrand.brandName,
               stockCode: detail.stockCart.stockCode,
               barcode: detail.stockCart.barcode,
               quantity: detail.quantity,
+              status: detail.Status.status,
               createdAt: new Date(detail.createdAt),
               updatedAt: new Date(detail.updatedAt),
             })),

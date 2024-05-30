@@ -50,7 +50,8 @@ export class ModelVariationComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private caseModelVariationsService: CaseModelVariationsService
+    private caseModelVariationsService: CaseModelVariationsService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -80,6 +81,43 @@ export class ModelVariationComponent implements OnInit {
 
   get myorGroupCode() {
     return this.caseModelForm.get('myorGroupCode');
+  }
+
+  onSubmit() {
+    const modelVariation = this.caseModelForm.get('modelVariation')!.value;
+    const modelVariationEng =
+      this.caseModelForm.get('modelVariationEng')!.value;
+    const myorGroupCode = this.caseModelForm.get('myorGroupCode')!.value;
+    const data = {
+      modelVariation: modelVariation,
+      modelVariationEng: modelVariationEng,
+      myorGroupCode: myorGroupCode,
+    };
+    this.caseModelVariationsService.generateVariation(data).subscribe(
+      (response) => {
+        this.caseModelVariationsService.getCaseModelVariations().subscribe(
+          (caseModelVariations) => {
+            this.caseModelVariations = caseModelVariations;
+          },
+          (error) => {
+            console.error('Error fetching case model variations: ', error);
+          }
+        );
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Case model variation generated successfully',
+        });
+      },
+      (error) => {
+        console.error('Error generating case model variation: ', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error generating case model variation',
+        });
+      }
+    );
   }
 
   onGlobalFilter(table: Table, event: Event) {

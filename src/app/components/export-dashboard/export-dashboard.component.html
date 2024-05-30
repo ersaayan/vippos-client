@@ -1,4 +1,5 @@
 <div class="card flex justify-content-center">
+  <p-toast />
   <p-accordion
     class="w-full"
     expandIcon="pi pi-plus"
@@ -12,7 +13,7 @@
           <span class="font-bold white-space-nowrap"> Order {{ i + 1 }} </span>
           <p-tag
             [value]="'Manufacturer Name: ' + order.user"
-            severity="info"
+            severity="warning"
             class="font-bold mr-auto ml-2"
           />
 
@@ -41,40 +42,129 @@
           'quantity'
         ]"
         [paginator]="true"
-        [rows]="10"
+        [rows]="5"
         [rowsPerPageOptions]="[5, 10, 20]"
       >
         <ng-template pTemplate="caption">
-          <div class="flex justify-content-between flex-column sm:flex-row">
-            <span class="p-input-icon-left mb-2">
+          <div class="flex justify-content-end flex-column sm:flex-row">
+            <span class="p-input-icon-left mr-2">
               <i class="pi pi-search"></i>
               <input
                 pInputText
                 type="text"
-                #filterta
+                #filter
                 (input)="onGlobalFilter(dt1, $event)"
                 placeholder="Search Keyword"
                 class="w-full"
               />
             </span>
+            <button
+              pButton
+              label="Clear"
+              class="p-button-outlined mr-auto"
+              icon="pi pi-filter-slash"
+              (click)="clear(dt1)"
+            ></button>
+            <span class="p-input-icon-left">
+              <i class="pi pi-upload"></i>
+              <input
+                pInputText
+                type="file"
+                #filter
+                placeholder="Browse File"
+                class="w-full"
+              />
+            </span>
+            <button
+              pButton
+              label="Upload"
+              class="p-button-outlined ml-2"
+              icon="pi pi-upload"
+              (click)="clear(dt1)"
+            ></button>
           </div>
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
             <th>Case Image</th>
-            <th>Case Brand</th>
-            <th>Case Model</th>
-            <th>Phone Model</th>
-            <th>Stock Code</th>
-            <th>Barcode</th>
-            <th>Quantity</th>
+            <th style="min-width: 12rem">
+              <div class="flex justify-content-between align-items-center">
+                Case Brand
+                <p-columnFilter
+                  type="text"
+                  field="orderDetail.brandName"
+                  display="menu"
+                  placeholder="Search by Case Brand"
+                ></p-columnFilter>
+              </div>
+            </th>
+            <th style="min-width: 12rem">
+              <div class="flex justify-content-between align-items-center">
+                Case Model
+                <p-columnFilter
+                  type="text"
+                  field="orderDetail.caseModel"
+                  display="menu"
+                  placeholder="Search by Case Model"
+                ></p-columnFilter>
+              </div>
+            </th>
+            <th style="min-width: 12rem">
+              <div class="flex justify-content-between align-items-center">
+                Phone Model
+                <p-columnFilter
+                  type="text"
+                  field="orderDetail.phoneName"
+                  display="menu"
+                  placeholder="Search by Phone Model"
+                ></p-columnFilter>
+              </div>
+            </th>
+            <th>
+              <div class="flex justify-content-between align-items-center">
+                Label
+                <p-columnFilter
+                  type="text"
+                  field="orderDetail.label"
+                  display="menu"
+                  placeholder="Search by Label"
+                ></p-columnFilter>
+              </div>
+            </th>
+            <th style="min-width: 12rem">
+              <div class="flex justify-content-between align-items-center">
+                Stock Code
+                <p-columnFilter
+                  type="text"
+                  field="orderDetail.stockCode"
+                  display="menu"
+                  placeholder="Search by Stock Code"
+                ></p-columnFilter>
+              </div>
+            </th>
+            <th>
+              <div class="flex justify-content-between align-items-center">
+                Barcode
+              </div>
+            </th>
+            <th>
+              <div class="flex justify-content-between align-items-center">
+                Quantity
+              </div>
+            </th>
+            <th pSortableColumn="status">
+              <div class="flex justify-content-between align-items-center">
+                Status
+              </div>
+              <p-sortIcon field="status" />
+            </th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-orderDetail>
           <tr>
             <td>
               <p-image
-                [src]="'http://localhost:1303' + orderDetail.caseImage"
+                [src]="apiURL + orderDetail.caseImage"
                 width="50"
                 [preview]="true"
                 [alt]="orderDetail.brandName"
@@ -83,9 +173,16 @@
             <td>{{ orderDetail.brandName }}</td>
             <td>{{ orderDetail.caseModel }}</td>
             <td>{{ orderDetail.phoneName }}</td>
+            <td>{{ orderDetail.label }}</td>
             <td>{{ orderDetail.stockCode.replace("//", "/") }}</td>
             <td>{{ orderDetail.barcode }}</td>
             <td>{{ orderDetail.quantity }}</td>
+            <td>
+              <p-tag
+                [value]="orderDetail.status"
+                [severity]="getSeverity(orderDetail.status)"
+              />
+            </td>
           </tr>
         </ng-template>
       </p-table>

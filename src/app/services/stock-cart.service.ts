@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { StockCartResponse } from '../interfaces/stock-cart-response';
 import { StockCartCustomResponse } from '../interfaces/stock-cart-custom-response';
+import stringify from 'json-stringify-safe';
 
 @Injectable({
   providedIn: 'root',
@@ -43,7 +44,7 @@ export class StockCartService {
       );
   }
 
-  getStockCart(): Observable<StockCartResponse[]> {
+  getStockCart(): Observable<any[]> {
     return this.http
       .get<StockCartCustomResponse[]>(
         `${this.apiUrl}/stock-carts/custom-output`
@@ -52,9 +53,7 @@ export class StockCartService {
         map((response: any[]) => {
           const stockCartResponse = response.map((item) => ({
             id: item.id,
-            phoneId: item.phoneId,
             caseBrand: item.caseBrand,
-            caseModelVariation: item.caseModelVariation,
             caseImage: item.caseImage,
             title: item.title,
             description: item.description,
@@ -65,11 +64,9 @@ export class StockCartService {
             satisFiyat3: item.satisFiyat3,
             satisFiyat4: item.satisFiyat4,
             quantity: item.quantity,
-            updatedBy: item.updatedBy,
-            createdAt: item.createdAt,
+            stockCode: item.stockCode,
             updatedAt: item.updatedAt,
           }));
-          console.log(stockCartResponse);
           return stockCartResponse;
         })
       );
@@ -124,26 +121,32 @@ export class StockCartService {
     );
   }
 
-  updateStockKart(stockKart: StockCartResponse) {
-    console.log('stockKart: ', stockKart);
-    return this.http.patch(
-      `${this.apiUrl}/update-stock-cart/` + `${stockKart.id}`,
+  updateStockCartBarcode(stockKart: StockCartResponse): Observable<any> {
+    console.log(stockKart);
+    const response = this.http.patch<any>(
+      `${this.apiUrl}/stock-carts/update-barcode/` + `${stockKart.id}`,
       {
-        phoneId: stockKart.phoneId,
-        caseBrand: stockKart.caseBrand,
-        caseModelVariation: stockKart.caseModelVariation,
-        caseImage: stockKart.caseImage,
-        title: stockKart.title,
-        description: stockKart.description,
         barcode: stockKart.barcode,
-        cost: stockKart.cost,
-        satisFiyat1: stockKart.satisFiyat1,
-        satisFiyat2: stockKart.satisFiyat2,
-        satisFiyat3: stockKart.satisFiyat3,
-        satisFiyat4: stockKart.satisFiyat4,
-        quantity: stockKart.quantity,
-        updatedAt: new Date(),
       }
+    );
+    response.subscribe((result) => {
+      console.log(result);
+    });
+    return response;
+  }
+
+  updateStockCartImage(stockKart: StockCartResponse) {
+    return this.http.patch(
+      `${this.apiUrl}/stock-carts/update-image/` + `${stockKart.id}`,
+      {
+        caseImage: stockKart.caseImage,
+      }
+    );
+  }
+
+  getAllPhotos() {
+    return this.http.get(
+      `${this.apiUrl}/stock-carts/get-all-photos-with-brand`
     );
   }
 }

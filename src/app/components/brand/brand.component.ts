@@ -5,7 +5,6 @@ import { CaseModelVariationsService } from '../../services/case-model-variations
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { CaseBrand } from '../../interfaces/case-brand-response';
-import { CaseModelVariationsResponse } from '../../interfaces/case-model-variations-response';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
@@ -53,7 +52,7 @@ export class BrandModelComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private caseBrandService: CaseBrandService,
-    private caseModelVariationsService: CaseModelVariationsService
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -77,6 +76,36 @@ export class BrandModelComponent implements OnInit {
 
   get myorGroupCode() {
     return this.caseBrandForm.get('myorGroupCode');
+  }
+
+  onSubmit() {
+    const myorGroupCode = this.caseBrandForm.get('myorGroupCode')!.value;
+    const brandName = this.caseBrandForm.get('brandName')!.value;
+    this.caseBrandService.generateBrand({ brandName, myorGroupCode }).subscribe(
+      (response) => {
+        this.caseBrandService.getCaseBrands().subscribe(
+          (caseBrands) => {
+            this.caseBrands = caseBrands;
+          },
+          (error) => {
+            console.error('Error fetching case brands: ', error);
+          }
+        );
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Brand generated successfully',
+        });
+      },
+      (error) => {
+        console.error('Error generating brand: ', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error generating brand',
+        });
+      }
+    );
   }
 
   onGlobalFilter(table: Table, event: Event) {

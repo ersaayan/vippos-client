@@ -25,4 +25,12 @@ export class CaseBrandService {
       })
     );
   }
+
+  generateBrand(data: any): Observable<any> {
+    const body = {
+      brandName: data.brandName,
+      myorGroupCode: data.myorGroupCode,
+    };
+    return this.http.post(`${this.apiUrl}/case-brand`, body);
+  }
 }

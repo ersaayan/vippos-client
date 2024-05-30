@@ -52,7 +52,7 @@ export class BarcodeComponent implements OnInit {
 
   onRowEditSave(stockKart: StockCartResponse) {
     delete this.clonedStockKarts[stockKart.id];
-    this.stockCartService.updateStockKart(stockKart).subscribe(
+    this.stockCartService.updateStockCartBarcode(stockKart).subscribe(
       () => {
         this.messageService.add({
           severity: 'info',

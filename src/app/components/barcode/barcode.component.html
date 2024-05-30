@@ -11,34 +11,52 @@
     >
       <ng-template pTemplate="header">
         <tr>
-          <th>Name</th>
+          <th style="min-width: 12rem">
+            <div class="flex justify-content-between align-items-center">
+              Stock Code
+              <p-columnFilter
+                type="text"
+                field="stockCode"
+                display="menu"
+                placeholder="Search by Stock Code"
+              ></p-columnFilter>
+            </div>
+          </th>
           <th>Barcode</th>
         </tr>
       </ng-template>
       <ng-template
         pTemplate="body"
-        let-stockKart
+        let-stockKarts
         let-editing="editing"
         let-ri="rowIndex"
       >
-        <tr [pEditableRow]="stockKart">
+        <tr [pEditableRow]="stockKarts">
           <td>
             <p-cellEditor>
               <ng-template pTemplate="input">
-                <input pInputText type="text" [(ngModel)]="stockKart.title" />
+                <input
+                  pInputText
+                  type="text"
+                  [(ngModel)]="stockKarts.stockCode"
+                />
               </ng-template>
               <ng-template pTemplate="output">
-                {{ stockKart.title }}
+                {{ stockKarts.stockCode }}
               </ng-template>
             </p-cellEditor>
           </td>
           <td>
             <p-cellEditor>
               <ng-template pTemplate="input">
-                <input pInputText type="text" [(ngModel)]="stockKart.barcode" />
+                <input
+                  pInputText
+                  type="text"
+                  [(ngModel)]="stockKarts.barcode"
+                />
               </ng-template>
               <ng-template pTemplate="output">
-                {{ stockKart.barcode }}
+                {{ stockKarts.barcode }}
               </ng-template>
             </p-cellEditor>
           </td>
@@ -51,7 +69,7 @@
                 type="button"
                 pInitEditableRow
                 icon="pi pi-pencil"
-                (click)="onRowEditInit(stockKart)"
+                (click)="onRowEditInit(stockKarts)"
                 class="p-button-rounded p-button-text"
               ></button>
               <button
@@ -61,7 +79,7 @@
                 type="button"
                 pSaveEditableRow
                 icon="pi pi-check"
-                (click)="onRowEditSave(stockKart)"
+                (click)="onRowEditSave(stockKarts)"
                 class="p-button-rounded p-button-text p-button-success mr-2"
               ></button>
               <button
@@ -71,7 +89,7 @@
                 type="button"
                 pCancelEditableRow
                 icon="pi pi-times"
-                (click)="onRowEditCancel(stockKart, ri)"
+                (click)="onRowEditCancel(stockKarts, ri)"
                 class="p-button-rounded p-button-text p-button-danger"
               ></button>
             </div>
