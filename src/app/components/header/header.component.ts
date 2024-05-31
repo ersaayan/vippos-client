@@ -18,10 +18,10 @@ import { Router } from '@angular/router';
     CommonModule,
     RippleModule,
   ],
-  templateUrl: './layout.component.html',
-  styleUrl: './layout.component.css',
+  templateUrl: './header.component.html',
+  styleUrl: './header.component.css',
 })
-export class LayoutComponent implements OnInit {
+export class HeaderComponent implements OnInit {
   items: MenuItem[] | undefined;
   constructor(private router: Router) {}
   ngOnInit() {
@@ -33,23 +33,43 @@ export class LayoutComponent implements OnInit {
       },
       {
         label: 'Stock Cart Generator',
-        icon: 'pi pi-chart-bar',
+        icon: 'pi pi-check-square',
         route: ['/generator'],
       },
       {
-        label: 'View and Download Database',
-        icon: 'pi pi-cloud-download',
+        label: 'View & Download Stock Cart',
+        icon: 'pi pi-database',
         route: ['/database'],
       },
       {
-        label: 'Edit Database',
-        icon: 'pi pi-database',
-        route: ['/barcode'],
+        label: 'Case Brand Model Generator',
+        icon: 'pi pi-folder-plus',
+        items: [
+          {
+            label: 'Case Brand Generator',
+            route: ['/brand'],
+          },
+          {
+            label: 'Case Model Generator',
+            route: ['/model'],
+          },
+        ],
       },
       {
-        label: 'Order Verification',
-        icon: 'pi pi-images',
-        route: ['/scanner'],
+        label: 'Editor',
+        icon: 'pi pi-pencil',
+        items: [
+          {
+            label: 'Barcode Editor',
+            icon: 'pi pi-barcode',
+            route: ['/barcode'],
+          },
+          {
+            label: 'Image Editor',
+            icon: 'pi pi-image',
+            route: ['/image'],
+          },
+        ],
       },
     ];
   }

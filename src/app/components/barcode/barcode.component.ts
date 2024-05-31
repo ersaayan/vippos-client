@@ -1,133 +1,78 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { StockCartService } from '../../services/stock-cart.service';
+import { StockCartResponse } from '../../interfaces/stock-cart-response';
 import { CommonModule } from '@angular/common';
 import { TagModule } from 'primeng/tag';
-import { DropdownModule } from 'primeng/dropdown';
-import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { TableModule } from 'primeng/table';
-import { MessageService } from 'primeng/api';
-import { StockResponse } from '../../interfaces/stock-response';
-import { StockService } from '../../services/stock.service';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { ToastModule } from 'primeng/toast';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-barcode',
   standalone: true,
   imports: [
+    TableModule,
+    ButtonModule,
+    ToastModule,
     CommonModule,
     TagModule,
-    DropdownModule,
-    ButtonModule,
     InputTextModule,
-    TableModule,
-    MatSnackBarModule,
-    ToastModule,
     FormsModule,
   ],
-  providers: [MessageService],
   templateUrl: './barcode.component.html',
   styleUrl: './barcode.component.css',
+  providers: [MessageService],
 })
 export class BarcodeComponent implements OnInit {
-  stockKarts: StockResponse[] = [];
+  stockKarts: StockCartResponse[] = [];
 
-  clonedStockKarts: { [s: string]: StockResponse } = {};
-
-  loading: boolean = true;
-
-  searchTerm: string = '';
-
-  matSnacksBar = inject(MatSnackBar);
+  clonedStockKarts: { [s: string]: StockCartResponse } = {};
 
   constructor(
     private messageService: MessageService,
-    private stockService: StockService
+    private stockCartService: StockCartService
   ) {}
-
-  ngOnInit(): void {
-    this.stockService.getStockKartsDb().subscribe(
+  ngOnInit() {
+    this.stockCartService.getStockCart().subscribe(
       (stockKarts) => {
         this.stockKarts = stockKarts;
-        this.loading = false;
       },
       (error) => {
-        console.error('Error fetching stock karts: ', error);
-        this.loading = false;
+        console.error('Error fetching stock carts: ', error);
       }
     );
   }
 
-  onRowEditInit(stockKart: StockResponse) {
+  onRowEditInit(stockKart: StockCartResponse) {
     this.clonedStockKarts[stockKart.id] = { ...stockKart };
   }
 
-  onRowEditSave(stockKart: StockResponse) {
+  onRowEditSave(stockKart: StockCartResponse) {
     delete this.clonedStockKarts[stockKart.id];
-    this.stockService.updateStockKart(stockKart).subscribe(
+    this.stockCartService.updateStockCartBarcode(stockKart).subscribe(
       () => {
-        this.matSnacksBar.open('Stock kart updated', 'Close', {
-          duration: 3000,
-          verticalPosition: 'top',
-          horizontalPosition: 'right',
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Güncellendi',
+          detail: 'Stock Cart Başarıyla Güncellendi',
         });
       },
       (error) => {
         console.error('Error updating stock kart: ', error);
-        this.matSnacksBar.open('Error updating stock kart', 'Close', {
-          duration: 3000,
-          verticalPosition: 'top',
-          horizontalPosition: 'right',
+        this.messageService.add({
+          severity: 'danger',
+          summary: 'Güncellenemedi',
+          detail: 'Stock Cart Güncellenemedi',
         });
       }
     );
   }
 
-  onRowEditCancel(stockKart: StockResponse, index: number) {
+  onRowEditCancel(stockKart: StockCartResponse, index: number) {
     this.stockKarts[index] = this.clonedStockKarts[stockKart.id];
     delete this.clonedStockKarts[stockKart.id];
-  }
-
-  deleteStockKarts() {
-    this.stockService.deleteStockKarts().subscribe((response) => {
-      this.stockService.getStockKartsDb().subscribe(
-        (stockKarts) => {
-          this.stockKarts = stockKarts;
-          this.loading = false;
-        },
-        (error) => {
-          console.error('Error fetching stock karts: ', error);
-          this.loading = false;
-        }
-      );
-
-      this.matSnacksBar.open('Stock Karts Deleted Successfully', 'Close', {
-        duration: 3000,
-        verticalPosition: 'top',
-        horizontalPosition: 'center',
-      });
-    });
-  }
-
-  cleanDb() {
-    this.stockService.deleteStockKarts().subscribe((response) => {
-      this.stockService.getStockKartsDb().subscribe(
-        (stockKarts) => {
-          this.stockKarts = stockKarts;
-          this.loading = false;
-        },
-        (error) => {
-          console.error('Error fetching stock karts: ', error);
-          this.loading = false;
-        }
-      );
-    });
-
-    this.matSnacksBar.open('Database Cleaned Successfully', 'Close', {
-      duration: 3000,
-      verticalPosition: 'top',
-      horizontalPosition: 'center',
-    });
   }
 }

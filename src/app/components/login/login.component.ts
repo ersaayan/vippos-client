@@ -29,7 +29,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
-
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   messageService = inject(MessageService);
@@ -38,7 +37,7 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private msgService: MessageService,
+    private msgService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -87,5 +86,4 @@ export class LoginComponent implements OnInit {
   get password() {
     return this.loginForm.controls['password'];
   }
-
 }
