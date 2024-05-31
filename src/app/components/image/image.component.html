@@ -1,4 +1,5 @@
 <div class="grid">
+  <p-toast />
   <div class="col-12 xl:col-12">
     <div class="card">
       <p-carousel
@@ -30,6 +31,7 @@
                   icon="pi pi-spinner"
                   styleClass="ml-2 w-full"
                   label="Change Photo"
+                  (onClick)="show(cases.caseImage)"
                 />
               </span>
             </div>

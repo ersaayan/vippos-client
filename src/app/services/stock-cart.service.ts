@@ -149,4 +149,11 @@ export class StockCartService {
       `${this.apiUrl}/stock-carts/get-all-photos-with-brand`
     );
   }
+
+  updateStockCartPhotos(formData: FormData) {
+    return this.http.post<any>(
+      `${this.apiUrl}/stock-carts/update-case-images`,
+      formData
+    );
+  }
 }

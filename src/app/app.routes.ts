@@ -67,12 +67,6 @@ export const routes: Routes = [
         canActivate: [authGuard],
         pathMatch: 'full',
       },
-      {
-        path: 'export-dashboard',
-        component: ExportDashboardComponent,
-        canActivate: [authGuard],
-        pathMatch: 'full',
-      },
     ],
   },
 ];

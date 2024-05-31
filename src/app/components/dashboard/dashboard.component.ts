@@ -7,6 +7,10 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { StyleClassModule } from 'primeng/styleclass';
 import { PanelMenuModule } from 'primeng/panelmenu';
+import { environment } from '../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { SkeletonModule } from 'primeng/skeleton';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,17 +24,55 @@ import { PanelMenuModule } from 'primeng/panelmenu';
     ButtonModule,
     StyleClassModule,
     PanelMenuModule,
+    SkeletonModule,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent implements OnInit {
+  apiUrl = environment.flaskUrl;
+
   chartData: any;
 
   chartOptions: any;
 
-  ngOnInit() {
-    this.initChart();
+  dünSatısVeri: number[] = [];
+
+  bugünSatısVeri: number[] = [];
+
+  haftaninEnCokSatanUrunleri!: any[];
+
+  gunlukToplamCiro: any;
+
+  dunToplamCiro: any;
+
+  dunToplamSiparisSayisi: any;
+
+  gunlukToplamSiparisSayisi: any;
+
+  gunlukToplamSatisSayisi: any;
+
+  dunToplamSatisSayisi: any;
+
+  gununEnCokSatanUrunu: any;
+
+  constructor(private http: HttpClient, private cdRef: ChangeDetectorRef) {}
+
+  ngOnInit(): void {
+    this.getDünSatısVeri();
+    this.getBugünSatısVeri();
+    this.sleep(1000).then(() => {
+      console.log('10 saniye bekledikten sonra çalıştı.');
+      this.initChart();
+    });
+    this.getHaftaninEnCokSatanUrunleri();
+    this.getGunlukToplamCiro();
+    this.getDunToplamCiro();
+    this.getDunToplamSiparisSayisi();
+    this.getGunlukToplamSiparisSayisi();
+    this.getGunlukToplamSatisSayisi();
+    this.getDunToplamSatisSayisi();
+    this.getGununEnCokSatanUrunu();
   }
 
   initChart() {
@@ -53,7 +95,7 @@ export class DashboardComponent implements OnInit {
       datasets: [
         {
           label: 'Dün',
-          data: [6300.51, 846, 10200, 16700, 17200, 22800],
+          data: this.dünSatısVeri,
           fill: false,
           backgroundColor: documentStyle.getPropertyValue('--green-700'),
           borderColor: documentStyle.getPropertyValue('--green-700'),
@@ -61,7 +103,7 @@ export class DashboardComponent implements OnInit {
         },
         {
           label: 'Bugün',
-          data: [5600.55, 1300, 13700],
+          data: this.bugünSatısVeri,
           fill: false,
           backgroundColor: documentStyle.getPropertyValue('--blue-600'),
           borderColor: documentStyle.getPropertyValue('--blue-600'),
@@ -99,5 +141,109 @@ export class DashboardComponent implements OnInit {
         },
       },
     };
+  }
+
+  public colorClasses = [
+    'text-red-500',
+    'text-blue-500',
+    'text-green-500',
+    'text-yellow-500',
+    'text-purple-500',
+    'text-pink-500',
+    'text-indigo-500',
+    'text-gray-500',
+    'text-teal-500',
+    'text-lime-500',
+  ];
+
+  sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async getDünSatısVeri() {
+    this.http
+      .get<any>(`${this.apiUrl}/flask/dun-yapılan-satışlar-grafiği`)
+      .subscribe((data) => {
+        for (const veri of data) {
+          this.dünSatısVeri.push(veri.Toplam_Ciro);
+        }
+      });
+  }
+
+  async getBugünSatısVeri() {
+    this.http
+      .get<any>(`${this.apiUrl}/flask/bugün-yapılan-satışlar-grafiği`)
+      .subscribe((data) => {
+        for (const veri of data) {
+          this.bugünSatısVeri.push(veri.Toplam_Ciro);
+        }
+      });
+  }
+
+  getHaftaninEnCokSatanUrunleri() {
+    this.http
+      .get<any[]>(
+        'https://pos.vipcase.com.tr/flask/haftanin_en_cok_satan_urunleri'
+      )
+      .subscribe((data) => {
+        this.haftaninEnCokSatanUrunleri = data;
+        console.log(this.haftaninEnCokSatanUrunleri);
+      });
+  }
+
+  getGunlukToplamCiro() {
+    this.http
+      .get(`${this.apiUrl}/flask/gunluk_toplam_ciro`)
+      .subscribe((data) => {
+        this.gunlukToplamCiro = data;
+      });
+  }
+
+  getDunToplamCiro() {
+    this.http
+      .get<any>(`${this.apiUrl}/flask/dun_toplam_ciro`)
+      .subscribe((data) => {
+        this.dunToplamCiro = data;
+      });
+  }
+
+  getDunToplamSiparisSayisi() {
+    this.http
+      .get<any>(`${this.apiUrl}/flask/dun_toplam_siparis_sayisi`)
+      .subscribe((data) => {
+        this.dunToplamSiparisSayisi = data.TOTAL;
+      });
+  }
+
+  getGunlukToplamSiparisSayisi() {
+    this.http
+      .get<any>(`${this.apiUrl}/flask/gunluk_toplam_siparis_sayisi`)
+      .subscribe((data) => {
+        this.gunlukToplamSiparisSayisi = data.TOTAL;
+      });
+  }
+
+  getGunlukToplamSatisSayisi() {
+    this.http
+      .get<any>(`${this.apiUrl}/flask/gunluk_toplam_satis_sayisi`)
+      .subscribe((data) => {
+        this.gunlukToplamSatisSayisi = data.TOTAL;
+      });
+  }
+
+  getDunToplamSatisSayisi() {
+    this.http
+      .get<any>(`${this.apiUrl}/flask/dun_toplam_satis_sayisi`)
+      .subscribe((data) => {
+        this.dunToplamSatisSayisi = data.TOTAL;
+      });
+  }
+
+  getGununEnCokSatanUrunu() {
+    this.http
+      .get<any>(`${this.apiUrl}/flask/gunun_en_cok_satan_urunu`)
+      .subscribe((data) => {
+        this.gununEnCokSatanUrunu = data;
+      });
   }
 }
