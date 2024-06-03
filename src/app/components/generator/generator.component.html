@@ -426,7 +426,7 @@
             <td>{{ stockKarts.myorStockName }}</td>
             <td>{{ stockKarts.ikasStockName }}</td>
             <td>{{ stockKarts.title }}</td>
-            <td>{{ stockKarts.description }}</td>
+            <td>{{ stockKarts.description | truncate : 15 }}</td>
             <td>{{ stockKarts.barcode }}</td>
             <td>{{ stockKarts.cost }}</td>
             <td>{{ stockKarts.quantity }}</td>

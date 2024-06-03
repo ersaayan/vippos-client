@@ -71,6 +71,16 @@ export class HeaderComponent implements OnInit {
           },
         ],
       },
+      {
+        label: 'Export Dashboard',
+        icon: 'pi pi-upload',
+        route: ['/export'],
+      },
+      {
+        label: 'Export Dashboard For Admin',
+        icon: 'pi pi-upload',
+        route: ['/export-admin'],
+      },
     ];
   }
 }

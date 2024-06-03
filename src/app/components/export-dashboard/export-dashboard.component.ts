@@ -1,17 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { TreeTable, TreeTableModule } from 'primeng/treetable';
+import { TreeTableModule } from 'primeng/treetable';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { MessageService, TreeNode } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { OrderService } from '../../services/order.service';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { OrderResponse } from '../../interfaces/order-response';
 import { AccordionModule } from 'primeng/accordion';
 import { BadgeModule } from 'primeng/badge';
-import { CaseBrandService } from '../../services/case-brand.service';
 import { CaseBrand } from '../../interfaces/case-brand-response';
 import stringify from 'json-stringify-safe';
 import { TagModule } from 'primeng/tag';
@@ -19,11 +17,11 @@ import { ImageModule } from 'primeng/image';
 import { environment } from '../../../environments/environment';
 import { ToastModule } from 'primeng/toast';
 import { FileUploadModule } from 'primeng/fileupload';
-import { HttpClient, HttpEvent } from '@angular/common/http';
+import { DropdownModule } from 'primeng/dropdown';
 
-interface UploadEvent {
-  originalEvent: HttpEvent<any>;
-  files: File[];
+interface Status {
+  id: string;
+  status: string;
 }
 
 @Component({
@@ -37,21 +35,24 @@ interface UploadEvent {
     ButtonModule,
     SelectButtonModule,
     AccordionModule,
-    BadgeModule,
     TableModule,
     TagModule,
     ImageModule,
     ToastModule,
-    FileUploadModule,
+    DropdownModule,
   ],
   templateUrl: './export-dashboard.component.html',
   styleUrl: './export-dashboard.component.css',
   providers: [OrderService, MessageService],
 })
 export class ExportDashboardComponent implements OnInit {
-  uploadedFiles: any[] = [];
-
   apiURL: string = environment.apiUrl;
+
+  photoUrl: string = environment.photoUrl;
+
+  statuses: Status[] | undefined;
+
+  selectedStatus: Status | undefined;
 
   caseBrands: CaseBrand[] = [];
 
@@ -63,34 +64,17 @@ export class ExportDashboardComponent implements OnInit {
 
   constructor(
     private orderService: OrderService,
-    private messageService: MessageService,
-    private http: HttpClient
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
     this.orderService.getOrdersWithDetails().subscribe((result) => {
       this.orders = result;
-      console.log(stringify(result));
     });
-  }
 
-  onBasicUploadAuto(event: UploadEvent, orderId: string) {
-    const formData: FormData = new FormData();
-    formData.append('orderId', orderId);
-
-    for (let file of event.files) {
-      formData.append('files', file, file.name);
-    }
-
-    this.http
-      .post(`${this.apiURL}/upload-file`, formData)
-      .subscribe((response) => {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Success',
-          detail: 'File Uploaded with Successfully!',
-        });
-      });
+    this.orderService.getStatuses().subscribe((result) => {
+      this.statuses = result;
+    });
   }
 
   onGlobalFilter(table: Table, event: Event) {

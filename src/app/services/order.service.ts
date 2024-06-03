@@ -3,13 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { OrderDetailResponse } from '../interfaces/order-detail-response';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OrderService {
   apiUrl: string = environment.apiUrl;
+
   constructor(private http: HttpClient) {}
 
   getOrdersWithDetails(): Observable<any[]> {
@@ -59,5 +59,9 @@ export class OrderService {
             })
           )
     );
+  }
+
+  getStatuses(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/status`);
   }
 }

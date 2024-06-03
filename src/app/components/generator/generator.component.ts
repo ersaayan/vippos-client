@@ -32,6 +32,7 @@ import { environment } from '../../../environments/environment';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { TruncatePipe } from '../../truncate.pipe';
 
 interface Column {
   field: string;
@@ -64,6 +65,7 @@ interface ExportColumn {
     MenubarModule,
     ToastModule,
     ConfirmDialogModule,
+    TruncatePipe,
   ],
   templateUrl: './generator.component.html',
   styleUrl: './generator.component.css',

@@ -16,6 +16,7 @@ import { StockCartCustomResponse } from '../../interfaces/stock-cart-custom-resp
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { environment } from '../../../environments/environment';
 import { ImageModule } from 'primeng/image';
+import { TruncatePipe } from '../../truncate.pipe';
 
 @Component({
   selector: 'app-database',
@@ -34,12 +35,15 @@ import { ImageModule } from 'primeng/image';
     RatingModule,
     ProgressBarModule,
     ImageModule,
+    TruncatePipe,
   ],
   templateUrl: './database.component.html',
   styleUrl: './database.component.css',
   providers: [StockCartService, MessageService, ConfirmationService],
 })
 export class DatabaseComponent implements OnInit {
+  photoUrl: string = environment.photoUrl;
+
   stockKarts: StockCartCustomResponse[] = [];
 
   loading: boolean = false;

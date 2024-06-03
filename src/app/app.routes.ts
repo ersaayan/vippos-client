@@ -10,6 +10,7 @@ import { ImageComponent } from './components/image/image.component';
 import { DatabaseComponent } from './components/database/database.component';
 import { ModelVariationComponent } from './components/model-variation/model-variation.component';
 import { ExportDashboardComponent } from './components/export-dashboard/export-dashboard.component';
+import { ExportDashboardForAdminComponent } from './components/export-dashboard-for-admin/export-dashboard-for-admin.component';
 
 export const routes: Routes = [
   {
@@ -64,6 +65,18 @@ export const routes: Routes = [
       {
         path: 'database',
         component: DatabaseComponent,
+        canActivate: [authGuard],
+        pathMatch: 'full',
+      },
+      {
+        path: 'export',
+        component: ExportDashboardComponent,
+        canActivate: [authGuard],
+        pathMatch: 'full',
+      },
+      {
+        path: 'export-admin',
+        component: ExportDashboardForAdminComponent,
         canActivate: [authGuard],
         pathMatch: 'full',
       },
