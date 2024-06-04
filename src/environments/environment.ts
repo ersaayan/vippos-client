@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://pos.vipcase.com.tr/api',
+  apiUrl: 'http://localhost:1303',
+  flaskUrl: 'http://localhost:5000',
 };

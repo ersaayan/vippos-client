@@ -1,153 +1,143 @@
 <br />
-<p-card header="Anlık Veriler" [style]="{ background: '#353e4b', flex: '1'  }">
-  <div style="display: flex; flex-wrap: wrap;">
-    <div class="card-container" style="flex-grow: 1;" >
-      <p-card [style]="{ background: '#353e4b' }">
-        <div class="card mb-0">
-          <div class="flex justify-content-between mb-3">
-            <div>
-              <span class="block text-500 font-medium">Toplam Ciro</span>
-              <div class="text-900 font-medium text-xl">
-                Bugün = {{ gunlukToplamCiro.TOTAL }}
-              </div>
-              Dün = {{ dunToplamCiro.TOTAL }}
-            </div>
-            <div
-              class="flex align-items-center justify-content-center bg-cyan-100 border-round"
-              [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
-            >
-              <i class="pi pi-inbox text-cyan-500 text-xl"></i>
-            </div>
+<div class="grid">
+  <div class="col-12 lg:col-4 xl:col-2-4">
+    <div class="card mb-0">
+      <div class="flex justify-content-between mb-3">
+        <div>
+          <span class="block text-500 font-medium mb-3">Toplam Ciro</span>
+          <div class="text-900 font-medium text-medium">
+            Bugün = {{ gunlukToplamCiro.TOTAL }}
           </div>
-          <span class="text-green-500 font-medium">Gün </span>
-          <span class="text-500">başlangıcından itibaren.</span>
+          Dün = {{ dunToplamCiro.TOTAL }}
         </div>
-      </p-card>
-    </div>
-
-    <div class="card-container" style="flex-grow: 1;">
-      <p-card [style]="{ background: '#353e4b' }">
-        <div class="card mb-0">
-          <div class="flex justify-content-between mb-3">
-            <div>
-              <span class="block text-500 font-medium">Toplam Sipariş </span>
-              <div class="text-900 font-medium text-xl">
-                Bugün = {{ gunlukToplamSiparisSayisi }}
-              </div>
-              Dün = {{ dunToplamSiparisSayisi }}
-            </div>
-            <div
-              class="flex align-items-center justify-content-center bg-blue-100 border-round"
-              [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
-            >
-              <i class="pi pi-shopping-cart text-blue-500 text-xl"></i>
-            </div>
-          </div>
-          <span class="text-green-500 font-medium">Gün </span>
-          <span class="text-500">başlangıcından itibaren.</span>
+        <div
+          class="flex align-items-center justify-content-center bg-blue-100 border-round"
+          [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
+        >
+          <i class="pi pi-money-bill text-blue-500 text-xl"></i>
         </div>
-      </p-card>
-    </div>
-
-    <div class="card-container" style="flex-grow: 1;">
-      <p-card [style]="{ background: '#353e4b' }">
-        <div class="card mb-0">
-          <div class="flex justify-content-between mb-3">
-            <div>
-              <span class="block text-500 font-medium"
-                >Toplam Sipariş Edilen Ürün</span
-              >
-              <div class="text-900 font-medium text-xl">
-                Bugün = {{ gunlukToplamSatisSayisi }}
-              </div>
-              Dün = {{ dunToplamSatisSayisi }}
-            </div>
-            <div
-              class="flex align-items-center justify-content-center bg-orange-100 border-round"
-              [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
-            >
-              <i class="pi pi-map-marker text-orange-500 text-xl"></i>
-            </div>
-          </div>
-          <span class="text-green-500 font-medium">Gün </span>
-          <span class="text-500">başlangıcından itibaren.</span>
-        </div>
-      </p-card>
-    </div>
-
-    <div class="card-container" style="flex-grow: 1;">
-      <p-card [style]="{ background: '#353e4b' }">
-        <div class="card mb-0">
-          <div class="flex justify-content-between mb-3">
-            <div>
-              <span class="block text-500 font-medium"
-                >Günün En Çok Satan Ürünü</span
-              >
-              <div class="text-900 font-medium text-xl">
-                {{ gununEnCokSatanUrunu.StokKodu }}
-              </div>
-            </div>
-            <div
-              class="flex align-items-center justify-content-center bg-cyan-100 border-round"
-              [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
-            >
-              <i class="pi pi-inbox text-cyan-500 text-xl"></i>
-            </div>
-          </div>
-          <span class="text-green-500 font-medium"
-            >{{ gununEnCokSatanUrunu.TOTAL }}
-          </span>
-          <span class="text-500"
-            >adet satıldı. Gün başlangıcından itibaren.</span
-          >
-        </div>
-      </p-card>
+      </div>
+      <span class="text-green-500 font-medium">Gün </span>
+      <span class="text-500">başlangıcından itibaren.</span>
     </div>
   </div>
-</p-card>
-<br />
-<p-card [style]="{ background: '#353e4b', flex: '1' }">
-  <div class="p-grid" style="display: flex; flex-wrap: wrap;">
-    <div class="p-col-12 p-md-6" style="flex-grow: 1;">
-      <p-card header="Haftanın En Çok Satan Ürünleri">
-        <span class="text-500 font-medium">Son 7 günlük veri. </span>
-        <p-table
-          [columns]="cols"
-          [value]="haftaninEnCokSatanUrunleri"
-          [responsive]="true"
+  <div class="col-12 lg:col-4 xl:col-2-4">
+    <div class="card mb-0">
+      <div class="flex justify-content-between mb-3">
+        <div>
+          <span class="block text-500 font-medium mb-3">Toplam Kar</span>
+          <div class="text-900 font-medium text-xl"><p-skeleton /></div>
+          <p-skeleton />
+        </div>
+        <div
+          class="flex align-items-center justify-content-center bg-orange-100 border-round"
+          [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
         >
-          <ng-template pTemplate="header" let-columns>
-            <tr>
-              <th *ngFor="let col of columns">
-                {{ col.header }}
-              </th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-rowData let-columns="columns">
-            <tr>
-              <td *ngFor="let col of columns">
-                {{ rowData[col.field] }}
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </p-card>
+          <i class="pi pi-turkish-lira text-orange-500 text-xl"></i>
+        </div>
+      </div>
+      <span class="text-green-500 font-medium"><p-skeleton /> </span>
+      <span class="text-300">Cooming soon.</span>
     </div>
-    <div class="p-col-12 p-md-6" style="flex-grow: 1;">
+  </div>
+  <div class="col-12 lg:col-4 xl:col-2-4">
+    <div class="card mb-0">
+      <div class="flex justify-content-between mb-3">
+        <div>
+          <span class="block text-500 font-medium mb-3">Toplam Sipariş</span>
+          <div class="text-900 font-medium text-medium">
+            Bugün = {{ gunlukToplamSiparisSayisi }}
+          </div>
+          Dün = {{ dunToplamSiparisSayisi }}
+        </div>
+        <div
+          class="flex align-items-center justify-content-center bg-cyan-100 border-round"
+          [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
+        >
+          <i class="pi pi-shopping-cart text-cyan-500 text-xl"></i>
+        </div>
+      </div>
+      <span class="text-green-500 font-medium">Gün </span>
+      <span class="text-500">başlangıcından itibaren.</span>
+    </div>
+  </div>
+  <div class="col-12 lg:col-4 xl:col-2-4">
+    <div class="card mb-0">
+      <div class="flex justify-content-between mb-3">
+        <div>
+          <span class="block text-500 font-medium mb-3"
+            >Toplam Satılan Ürün</span
+          >
+          <div class="text-900 font-medium text-medium">
+            Bugün = {{ gunlukToplamSatisSayisi }}
+          </div>
+          Dün = {{ dunToplamSatisSayisi }}
+        </div>
+        <div
+          class="flex align-items-center justify-content-center bg-purple-100 border-round"
+          [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
+        >
+          <i class="pi pi-cart-arrow-down text-purple-500 text-xl"></i>
+        </div>
+      </div>
+      <span class="text-green-500 font-medium">Gün </span>
+      <span class="text-500">başlangıcından itibaren.</span>
+    </div>
+  </div>
+  <div class="col-12 lg:col-4 xl:col-2-4">
+    <div class="card mb-0">
+      <div class="flex justify-content-between mb-3">
+        <div>
+          <span class="block text-500 font-medium mb-3">En çok satan ürün</span>
+          <div class="text-900 font-medium text-xl">
+            {{ gununEnCokSatanUrunu.StokKodu }}
+          </div>
+        </div>
+        <div
+          class="flex align-items-center justify-content-center bg-purple-100 border-round"
+          [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
+        >
+          <i class="pi pi-trophy text-purple-500 text-xl"></i>
+        </div>
+      </div>
+      <span class="text-green-500 font-medium"
+        >{{ gununEnCokSatanUrunu.TOTAL }}
+      </span>
+      <span class="text-500">adet satıldı. Gün başlangıcından itibaren.</span>
+    </div>
+  </div>
+  <div class="col-12 xl:col-6">
+    <div class="card">
+      <h3>Satışa Genel Bakış</h3>
       <p-chart
         type="line"
-        [data]="tablo"
-        [options]="options"
-        style="
-          height: 100%;
-          width: 100%;
-          background: #1f2937;
-          border-style: hidden;
-        "
+        [data]="chartData"
+        [options]="chartOptions"
       ></p-chart>
     </div>
   </div>
-</p-card>
-
-
-
+  <div class="col-12 xl:col-6">
+    <div class="card">
+      <div class="flex justify-content-between align-items-center mb-5">
+        <h3>En Çok Satan 10 Ürün</h3>
+      </div>
+      <ul class="list-none p-0 m-0">
+        <li
+          *ngFor="let urun of haftaninEnCokSatanUrunleri; let i = index"
+          class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
+        >
+          <div>
+            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">{{
+              urun.StokKodu
+            }}</span>
+          </div>
+          <div class="mt-2 md:mt-0 flex align-items-center">
+            <span [ngClass]="colorClasses[i]" class="ml-3 font-medium"
+              >{{ urun.TOTAL }} adet</span
+            >
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,94 +1,81 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { CardModule } from 'primeng/card';
-import { MeterGroupModule } from 'primeng/metergroup';
-import { DataViewModule } from 'primeng/dataview';
-import { TagModule } from 'primeng/tag';
 import { ChartModule } from 'primeng/chart';
-import { SplitterModule } from 'primeng/splitter';
-import { HttpClient } from '@angular/common/http';
+import { MenuModule } from 'primeng/menu';
 import { TableModule } from 'primeng/table';
-
-interface Column {
-  field: string;
-  header: string;
-}
+import { ButtonModule } from 'primeng/button';
+import { StyleClassModule } from 'primeng/styleclass';
+import { PanelMenuModule } from 'primeng/panelmenu';
+import { environment } from '../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { SkeletonModule } from 'primeng/skeleton';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    CardModule,
     CommonModule,
-    MeterGroupModule,
-    DataViewModule,
-    TagModule,
+    CardModule,
     ChartModule,
-    SplitterModule,
+    MenuModule,
     TableModule,
+    ButtonModule,
+    StyleClassModule,
+    PanelMenuModule,
+    SkeletonModule,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent implements OnInit {
-  haftaninEnCokSatanUrunleri!: any[];
+  apiUrl = environment.flaskUrl;
 
-  gununEnCokSatanUrunu: any;
+  chartData: any;
 
-  dunToplamSiparisSayisi: any;
-
-  gunlukToplamSiparisSayisi: any;
-
-  gunlukToplamKargolananSiparisSayisi: any;
-
-  haftalikToplamSatisSayisi: any;
-
-  gunlukToplamSatisSayisi: any;
-
-  dunToplamSatisSayisi: any;
-
-  haftalikToplamCiro: any;
-
-  gunlukToplamCiro: any;
-
-  dunToplamCiro: any;
+  chartOptions: any;
 
   dünSatısVeri: number[] = [];
 
   bugünSatısVeri: number[] = [];
 
-  saatVerileri: string[] = []
+  haftaninEnCokSatanUrunleri!: any[];
 
-  data: any;
+  gunlukToplamCiro: any;
 
-  tablo: any;
+  dunToplamCiro: any;
 
-  options: any;
+  dunToplamSiparisSayisi: any;
 
-  cols!: Column[];
+  gunlukToplamSiparisSayisi: any;
 
-  düntoplamMiktarlar: number[] = [];
-  bugüntoplamMiktarlar: number[] = [];
+  gunlukToplamSatisSayisi: any;
 
-  constructor(private http: HttpClient) {}
+  dunToplamSatisSayisi: any;
+
+  gununEnCokSatanUrunu: any;
+
+  constructor(private http: HttpClient, private cdRef: ChangeDetectorRef) {}
+
   ngOnInit(): void {
     this.getDünSatısVeri();
     this.getBugünSatısVeri();
+    this.sleep(1000).then(() => {
+      console.log('10 saniye bekledikten sonra çalıştı.');
+      this.initChart();
+    });
     this.getHaftaninEnCokSatanUrunleri();
-    this.getGununEnCokSatanUrunu();
-    this.getDunToplamSiparisSayisi();
-    this.getGunlukToplamSiparisSayisi();
-    //this.getGunlukToplamKargolananSiparisSayisi();
-    //this.getHaftalikToplamSatisSayisi();
-    this.getGunlukToplamSatisSayisi();
-    this.getDunToplamSatisSayisi();
-    //this.getHaftalikToplamCiro();
     this.getGunlukToplamCiro();
     this.getDunToplamCiro();
-    this.cols = [
-      { field: 'StokKodu', header: 'Stok Kodu' },
-      { field: 'TOTAL', header: 'Toplam' },
-    ];
+    this.getDunToplamSiparisSayisi();
+    this.getGunlukToplamSiparisSayisi();
+    this.getGunlukToplamSatisSayisi();
+    this.getDunToplamSatisSayisi();
+    this.getGununEnCokSatanUrunu();
+  }
+
+  initChart() {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
     const textColorSecondary = documentStyle.getPropertyValue(
@@ -96,7 +83,7 @@ export class DashboardComponent implements OnInit {
     );
     const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
-    this.tablo = {
+    this.chartData = {
       labels: [
         '00.00-04.00',
         '04.00-08.00',
@@ -107,25 +94,25 @@ export class DashboardComponent implements OnInit {
       ],
       datasets: [
         {
-          label: 'Bugün',
+          label: 'Dün',
+          data: this.dünSatısVeri,
           fill: false,
-          borderColor: documentStyle.getPropertyValue('--green-500'),
+          backgroundColor: documentStyle.getPropertyValue('--green-700'),
+          borderColor: documentStyle.getPropertyValue('--green-700'),
           tension: 0.4,
-          data: this.bugünSatısVeri,
         },
         {
-          label: 'Dün',
+          label: 'Bugün',
+          data: this.bugünSatısVeri,
           fill: false,
-          borderColor: documentStyle.getPropertyValue('--blue-500'),
+          backgroundColor: documentStyle.getPropertyValue('--blue-600'),
+          borderColor: documentStyle.getPropertyValue('--blue-600'),
           tension: 0.4,
-          data: this.dünSatısVeri,
         },
       ],
     };
 
-    this.options = {
-      maintainAspectRatio: false,
-      aspectRatio: 0.6,
+    this.chartOptions = {
       plugins: {
         legend: {
           labels: {
@@ -154,92 +141,59 @@ export class DashboardComponent implements OnInit {
         },
       },
     };
-    setInterval(() => {
-      this.getDünSatısVeri();
-      this.getBugünSatısVeri();
-      this.getHaftaninEnCokSatanUrunleri();
-      this.getGununEnCokSatanUrunu();
-      this.getGunlukToplamSiparisSayisi();
-      this.getGunlukToplamSatisSayisi();
-      this.getGunlukToplamCiro();
-    }, 300000);
+  }
+
+  public colorClasses = [
+    'text-red-500',
+    'text-blue-500',
+    'text-green-500',
+    'text-yellow-500',
+    'text-purple-500',
+    'text-pink-500',
+    'text-indigo-500',
+    'text-gray-500',
+    'text-teal-500',
+    'text-lime-500',
+  ];
+
+  sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async getDünSatısVeri() {
+    this.http
+      .get<any>(`${this.apiUrl}/flask/dun-yapılan-satışlar-grafiği`)
+      .subscribe((data) => {
+        for (const veri of data) {
+          this.dünSatısVeri.push(veri.Toplam_Ciro);
+        }
+      });
+  }
+
+  async getBugünSatısVeri() {
+    this.http
+      .get<any>(`${this.apiUrl}/flask/bugün-yapılan-satışlar-grafiği`)
+      .subscribe((data) => {
+        for (const veri of data) {
+          this.bugünSatısVeri.push(veri.Toplam_Ciro);
+        }
+      });
   }
 
   getHaftaninEnCokSatanUrunleri() {
     this.http
-      .get<any[]>('https://pos.vipcase.com.tr/flask/haftanin_en_cok_satan_urunleri')
+      .get<any[]>(
+        'https://pos.vipcase.com.tr/flask/haftanin_en_cok_satan_urunleri'
+      )
       .subscribe((data) => {
         this.haftaninEnCokSatanUrunleri = data;
-      });
-  }
-
-  getGununEnCokSatanUrunu() {
-    this.http
-      .get<any>('https://pos.vipcase.com.tr/flask/gunun_en_cok_satan_urunu')
-      .subscribe((data) => {
-        this.gununEnCokSatanUrunu = data;
-      });
-  }
-
-  getDunToplamSiparisSayisi() {
-    this.http
-      .get<any>('https://pos.vipcase.com.tr/flask/dun_toplam_siparis_sayisi')
-      .subscribe((data) => {
-        this.dunToplamSiparisSayisi = data.TOTAL;
-      });
-  }
-
-  getGunlukToplamSiparisSayisi() {
-    this.http
-      .get<any>('https://pos.vipcase.com.tr/flask/gunluk_toplam_siparis_sayisi')
-      .subscribe((data) => {
-        this.gunlukToplamSiparisSayisi = data.TOTAL;
-      });
-  }
-
-  getGunlukToplamKargolananSiparisSayisi() {
-    this.http
-      .get<any>('https://pos.vipcase.com.tr/flask/gunluk_toplam_kargolanan_siparis_sayisi')
-      .subscribe((data) => {
-        this.gunlukToplamKargolananSiparisSayisi = data;
-      });
-  }
-
-  getHaftalikToplamSatisSayisi() {
-    this.http
-      .get<any>('https://pos.vipcase.com.tr/flask/haftalik_toplam_satis_sayisi')
-      .subscribe((data) => {
-        this.haftalikToplamSatisSayisi = data;
-      });
-  }
-
-  getGunlukToplamSatisSayisi() {
-    this.http
-      .get<any>('https://pos.vipcase.com.tr/flask/gunluk_toplam_satis_sayisi')
-      .subscribe((data) => {
-        this.gunlukToplamSatisSayisi = data.TOTAL;
-      });
-  }
-
-  getDunToplamSatisSayisi() {
-    this.http
-      .get<any>('https://pos.vipcase.com.tr/flask/dun_toplam_satis_sayisi')
-      .subscribe((data) => {
-        this.dunToplamSatisSayisi = data.TOTAL;
-      });
-  }
-
-  getHaftalikToplamCiro() {
-    this.http
-      .get<any>('https://pos.vipcase.com.tr/flask/haftalik_toplam_ciro')
-      .subscribe((data) => {
-        this.haftalikToplamCiro = data;
+        console.log(this.haftaninEnCokSatanUrunleri);
       });
   }
 
   getGunlukToplamCiro() {
     this.http
-      .get<any>('https://pos.vipcase.com.tr/flask/gunluk_toplam_ciro')
+      .get(`${this.apiUrl}/flask/gunluk_toplam_ciro`)
       .subscribe((data) => {
         this.gunlukToplamCiro = data;
       });
@@ -247,31 +201,49 @@ export class DashboardComponent implements OnInit {
 
   getDunToplamCiro() {
     this.http
-      .get<any>('https://pos.vipcase.com.tr/flask/dun_toplam_ciro')
+      .get<any>(`${this.apiUrl}/flask/dun_toplam_ciro`)
       .subscribe((data) => {
         this.dunToplamCiro = data;
       });
   }
 
-  getDünSatısVeri() {
+  getDunToplamSiparisSayisi() {
     this.http
-      .get<any>('https://pos.vipcase.com.tr/flask/dun-yapılan-satışlar-grafiği')
+      .get<any>(`${this.apiUrl}/flask/dun_toplam_siparis_sayisi`)
       .subscribe((data) => {
-        for (const veri of data) {
-          this.dünSatısVeri.push(veri.Toplam_Ciro);
-        }
-        console.log(this.dünSatısVeri);
+        this.dunToplamSiparisSayisi = data.TOTAL;
       });
   }
 
-  getBugünSatısVeri() {
+  getGunlukToplamSiparisSayisi() {
     this.http
-      .get<any>('https://pos.vipcase.com.tr/flask/bugün-yapılan-satışlar-grafiği')
+      .get<any>(`${this.apiUrl}/flask/gunluk_toplam_siparis_sayisi`)
       .subscribe((data) => {
-        for (const veri of data) {
-          this.bugünSatısVeri.push(veri.Toplam_Ciro);
-        }
-        console.log(this.bugünSatısVeri);
+        this.gunlukToplamSiparisSayisi = data.TOTAL;
+      });
+  }
+
+  getGunlukToplamSatisSayisi() {
+    this.http
+      .get<any>(`${this.apiUrl}/flask/gunluk_toplam_satis_sayisi`)
+      .subscribe((data) => {
+        this.gunlukToplamSatisSayisi = data.TOTAL;
+      });
+  }
+
+  getDunToplamSatisSayisi() {
+    this.http
+      .get<any>(`${this.apiUrl}/flask/dun_toplam_satis_sayisi`)
+      .subscribe((data) => {
+        this.dunToplamSatisSayisi = data.TOTAL;
+      });
+  }
+
+  getGununEnCokSatanUrunu() {
+    this.http
+      .get<any>(`${this.apiUrl}/flask/gunun_en_cok_satan_urunu`)
+      .subscribe((data) => {
+        this.gununEnCokSatanUrunu = data;
       });
   }
 }

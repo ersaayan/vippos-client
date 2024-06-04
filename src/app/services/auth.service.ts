@@ -1,9 +1,9 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { LoginRequest } from '../interfaces/login-request';
 import { Observable, map } from 'rxjs';
 import { AuthResponse } from '../interfaces/auth-response';
-import { HttpClient } from '@angular/common/http';
+import { LoginRequest } from '../interfaces/login-request';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
@@ -12,7 +12,6 @@ import { jwtDecode } from 'jwt-decode';
 export class AuthService {
   apiUrl: string = environment.apiUrl;
   private tokenKey = 'accessToken';
-
   constructor(private http: HttpClient) {}
 
   login(data: LoginRequest): Observable<AuthResponse> {
@@ -36,7 +35,6 @@ export class AuthService {
     return !this.isTokenExpired();
   };
 
-
   private getToken = (): string | null =>
     localStorage.getItem(this.tokenKey) || '';
 
@@ -47,6 +45,5 @@ export class AuthService {
     const isTokenExpired = Date.now() >= decoded['exp']! * 1000;
     if (isTokenExpired) this.logout();
     return isTokenExpired;
-
   }
 }

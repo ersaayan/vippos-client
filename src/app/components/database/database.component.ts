@@ -1,98 +1,80 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { StockResponse } from '../../interfaces/stock-response';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Table, TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { RippleModule } from 'primeng/ripple';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
-import { MessageService } from 'primeng/api';
-import { StockService } from '../../services/stock.service';
-
-interface Column {
-  field: string;
-  header: string;
-  customExportHeader?: string;
-}
-
-interface ExportColumn {
-  title: string;
-  dataKey: string;
-}
+import { SliderModule } from 'primeng/slider';
+import { RatingModule } from 'primeng/rating';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { StockCartService } from '../../services/stock-cart.service';
+import { StockCartCustomResponse } from '../../interfaces/stock-cart-custom-response';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { environment } from '../../../environments/environment';
+import { ImageModule } from 'primeng/image';
 
 @Component({
   selector: 'app-database',
   standalone: true,
   imports: [
     TableModule,
-    ButtonModule,
-    CardModule,
+    ToastModule,
     CommonModule,
-    MatSnackBarModule,
+    ButtonModule,
+    InputTextModule,
+    ToggleButtonModule,
+    RippleModule,
     MultiSelectModule,
-    CheckboxModule,
     DropdownModule,
+    SliderModule,
+    RatingModule,
+    ProgressBarModule,
+    ImageModule,
   ],
-  providers: [MessageService],
   templateUrl: './database.component.html',
   styleUrl: './database.component.css',
+  providers: [StockCartService, MessageService, ConfirmationService],
 })
 export class DatabaseComponent implements OnInit {
-  stockKarts: StockResponse[] = [];
+  stockKarts: StockCartCustomResponse[] = [];
 
-  selectedStockKarts: StockResponse[] = [];
+  loading: boolean = false;
 
-  loading: boolean = true;
+  @ViewChild('filter') filter!: ElementRef;
 
-  searchTerm: string = '';
+  constructor(private stockCartService: StockCartService) {}
 
-  matSnacksBar = inject(MatSnackBar);
-
-  constructor(
-    private messageService: MessageService,
-    private stockService: StockService,
-    private snackBar: MatSnackBar
-  ) {}
-
-  cols!: Column[];
-
-  stockCols!: Column[];
-
-  exportColumns!: ExportColumn[];
-
-  ngOnInit(): void {
-    this.stockService.getStockKartsDb().subscribe(
+  ngOnInit() {
+    this.stockCartService.getStockCarts().subscribe(
       (stockKarts) => {
+        console.log(stockKarts);
         this.stockKarts = stockKarts;
-        this.loading = false;
       },
       (error) => {
-        console.error('Error fetching stock karts: ', error);
-        this.loading = false;
+        console.error('Error fetching stock carts: ', error);
       }
     );
-
-    this.stockCols = [
-      { field: 'id', header: 'Id', customExportHeader: 'StockKartId' },
-      { field: 'CaseBrand', header: 'Case Brand Name' },
-      { field: 'CaseModelVariations', header: 'Case Model Variations' },
-      { field: 'CaseModelTitle', header: 'Case Model Title' },
-      { field: 'ProductIds', header: 'Product Ids' },
-      { field: 'Description', header: 'Description' },
-      { field: 'Barcode', header: 'Barcode' },
-      { field: 'myorStockName', header: 'Myor Stock Name' },
-      { field: 'ikasStockName', header: 'Ikas Stock Name' },
-      { field: 'stockCode', header: 'Stock Code' },
-      { field: 'createdAt', header: 'Created At' },
-      { field: 'updatedAt', header: 'Updated At' },
-    ];
   }
+
+  onGlobalFilter(table: Table, event: Event) {
+    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
+  clear(table: Table) {
+    table.clear();
+    this.filter.nativeElement.value = '';
+  }
+
   downloadIkas() {
-    window.location.href = 'https://pos.vipcase.com.tr/api/stock-kart/ikas-export';
+    const apiUrl: string = environment.apiUrl;
+    window.location.href = `${apiUrl}/stock-carts/export-stock-cart-ikas`;
   }
   downloadMyor() {
-    window.location.href = 'https://pos.vipcase.com.tr/api/stock-kart/myor-export';
+    const apiUrl: string = environment.apiUrl;
+    window.location.href = `${apiUrl}/stock-carts/export-stock-cart-myor`;
   }
 }
