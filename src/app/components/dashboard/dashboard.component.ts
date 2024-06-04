@@ -62,7 +62,7 @@ export class DashboardComponent implements OnInit {
     this.getDünSatısVeri();
     this.getBugünSatısVeri();
     this.sleep(1000).then(() => {
-      console.log('10 saniye bekledikten sonra çalıştı.');
+      console.log('MsSql hata verdi. 10 saniye bekledikten sonra çalıştı.');
       this.initChart();
     });
     this.getHaftaninEnCokSatanUrunleri();
@@ -187,7 +187,6 @@ export class DashboardComponent implements OnInit {
       )
       .subscribe((data) => {
         this.haftaninEnCokSatanUrunleri = data;
-        console.log(this.haftaninEnCokSatanUrunleri);
       });
   }
 

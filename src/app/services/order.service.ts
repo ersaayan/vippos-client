@@ -48,20 +48,14 @@ export class OrderService {
         })
       );
   }
-  sentConsole() {
-    console.log(
-      'order response' +
-        this.http
-          .get<any[]>(`${this.apiUrl}/order/get-all-orders-with-details`)
-          .pipe(
-            map((response: any[]) => {
-              return response.map((item) => ({}));
-            })
-          )
-    );
-  }
+
 
   getStatuses(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/status`);
+  }
+
+  updateOrderDetailStatus(orderDetailId: string, statusId: string) {
+    const url = `${this.apiUrl}/order/order-details-status/${orderDetailId}`;
+    return this.http.patch(url, { statusId });
   }
 }

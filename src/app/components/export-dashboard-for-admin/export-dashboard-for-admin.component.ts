@@ -16,9 +16,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { OrderFilesService } from '../../services/order-files.service';
 import { OrderFile } from '../../interfaces/file-model';
+import { OrderDetailResponse } from '../../interfaces/order-detail-response';
 
 interface Status {
-  id: number;
+  id: string;
   status: string;
   label: string;
   value: string;
@@ -86,16 +87,15 @@ export class ExportDashboardForAdminComponent implements OnInit {
     this.orderService.getStatuses().subscribe((result: any[]) => {
       this.statuses = result.map((status) => ({
         id: status.id,
-        status: status.status,
-        label: status.status,
-        value: status.status,
+        status: status.status, // Burada status.name veya benzeri bir alan adı kullanmalısınız.
+        label: status.status, // Aynı şekilde burada da.
+        value: status.id, // Ve burada da.
       }));
     });
   }
 
   loadFiles(orderId: string) {
     this.orderFilesService.getOrderFiles(orderId).subscribe((files) => {
-      console.log('API Response:', files);
       this.files = files.map((file) => ({
         ...file,
         fileUrl: this.photoUrl + file.fileUrl,
@@ -111,6 +111,53 @@ export class ExportDashboardForAdminComponent implements OnInit {
     }
   }
 
+  getStatusLabel(statusId: string): string {
+    const status = this.statuses.find((s) => s.id === statusId);
+    return status ? status.label : 'Unknown';
+  }
+
+  onStatusChange(orderDetail: any, newStatusId: string) {
+    this.orderService
+      .updateOrderDetailStatus(orderDetail.id, newStatusId)
+      .subscribe({
+        next: (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Order status updated successfully',
+          });
+
+          // Find the index of the updated orderDetail
+          const orderIndex = this.orders.findIndex((order) =>
+            order.orderDetails.some((od: any) => od.id === orderDetail.id)
+          );
+
+          if (orderIndex > -1) {
+            // Find the orderDetail object within the order
+            const orderDetailToUpdate = this.orders[
+              orderIndex
+            ].orderDetails.find((od: any) => od.id === orderDetail.id);
+
+            if (orderDetailToUpdate) {
+              // Update the original orderDetail object (and potentially the status label)
+              orderDetailToUpdate.statusId = newStatusId;
+              orderDetailToUpdate.status =
+                this.statuses.find((s) => s.id === newStatusId)?.label ||
+                orderDetailToUpdate.status;
+            }
+          }
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update order status',
+          });
+          console.error('Failed to update order status', error);
+        },
+      });
+  }
+
   isImage(fileName: string): boolean {
     return /\.(jpg|jpeg|png|gif)$/i.test(fileName);
   }
@@ -122,14 +169,16 @@ export class ExportDashboardForAdminComponent implements OnInit {
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
+
   clear(table: Table) {
     table.clear();
     this.filter.nativeElement.value = '';
   }
+
   getSeverity(status: string) {
     switch (status) {
       case 'New Order':
-        return 'info';
+        return 'danger';
       case 'In Production':
         return 'info';
       case 'Production Completed':
@@ -149,7 +198,7 @@ export class ExportDashboardForAdminComponent implements OnInit {
       case 'Delivered':
         return 'info';
       case 'Cancelled':
-        return 'danger';
+        return 'contrast';
       case 'Return Requested':
         return 'warning';
       case 'Return Approved':

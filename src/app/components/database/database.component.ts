@@ -55,7 +55,6 @@ export class DatabaseComponent implements OnInit {
   ngOnInit() {
     this.stockCartService.getStockCarts().subscribe(
       (stockKarts) => {
-        console.log(stockKarts);
         this.stockKarts = stockKarts;
       },
       (error) => {

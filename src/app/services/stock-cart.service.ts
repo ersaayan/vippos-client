@@ -97,7 +97,6 @@ export class StockCartService {
             satisFiyat4: item.satisFiyat4,
             updatedAt: item.updatedAt,
           }));
-          console.log(stockCartResponse);
           return stockCartResponse;
         })
       );
@@ -122,7 +121,6 @@ export class StockCartService {
   }
 
   updateStockCartBarcode(stockKart: StockCartResponse): Observable<any> {
-    console.log(stockKart);
     const response = this.http.patch<any>(
       `${this.apiUrl}/stock-carts/update-barcode/` + `${stockKart.id}`,
       {
@@ -130,7 +128,6 @@ export class StockCartService {
       }
     );
     response.subscribe((result) => {
-      console.log(result);
     });
     return response;
   }
