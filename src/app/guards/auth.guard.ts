@@ -24,5 +24,18 @@ export const authGuard: CanActivateFn = (route, state) => {
   } else {
     console.error('localStorage is not defined');
     return false;
+
+  if (localStorage.getItem('accessToken')) {
+    if (authService.isLoggedIn()) {
+      return true;
+    } else {
+      authService.logout();
+      router.navigate(['login']);
+      return false; // Navigasyon sonrasında false dönmek daha güvenli
+    }
+  } else {
+    authService.logout();
+    router.navigate(['login']);
+    return false; // Navigasyon sonrasında false dönmek daha güvenli
   }
 };
