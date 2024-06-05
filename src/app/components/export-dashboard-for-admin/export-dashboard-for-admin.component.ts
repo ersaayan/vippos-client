@@ -11,12 +11,20 @@ import { DropdownModule } from 'primeng/dropdown';
 import { ImageModule } from 'primeng/image';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
-import { FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { OrderFilesService } from '../../services/order-files.service';
 import { OrderFile } from '../../interfaces/file-model';
 import { OrderDetailResponse } from '../../interfaces/order-detail-response';
+import { Observable } from 'rxjs';
 
 interface Status {
   id: string;
@@ -40,12 +48,15 @@ interface Status {
     FormsModule,
     InputTextModule,
     SelectButtonModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './export-dashboard-for-admin.component.html',
   styleUrl: './export-dashboard-for-admin.component.css',
   providers: [OrderService, MessageService],
 })
 export class ExportDashboardForAdminComponent implements OnInit {
+  orderUploadFileForm!: FormGroup;
+
   apiURL: string = environment.apiUrl;
 
   photoUrl: string = environment.photoUrl;
@@ -56,6 +67,8 @@ export class ExportDashboardForAdminComponent implements OnInit {
 
   orders: any[] = [];
 
+  ordersCustom: any[] = [];
+
   files: OrderFile[] = [];
 
   orderDetails: any[] = [];
@@ -64,15 +77,36 @@ export class ExportDashboardForAdminComponent implements OnInit {
 
   @ViewChild('filter') filter!: ElementRef;
 
+  fileName = 'Select File';
+  fileInfos?: Observable<any>;
+  currentFile?: File;
+
   constructor(
     private orderService: OrderService,
     private messageService: MessageService,
-    private orderFilesService: OrderFilesService
+    private orderFilesService: OrderFilesService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
+    this.orderUploadFileForm = this.fb.group({
+      orderFile: [File, Validators.required],
+    });
     this.loadOrders();
     this.loadStatuses();
+    this.loadOrdersCustomOutput();
+  }
+
+  get orderFile() {
+    return this.orderUploadFileForm.get('orderFile') as FormControl;
+  }
+
+  private loadOrdersCustomOutput() {
+    this.orderService
+      .getOrderWithDetailsGroupcaseBrandInOrderDetail()
+      .subscribe((result) => {
+        this.ordersCustom = result;
+      });
   }
 
   private loadOrders() {
@@ -87,28 +121,15 @@ export class ExportDashboardForAdminComponent implements OnInit {
     this.orderService.getStatuses().subscribe((result: any[]) => {
       this.statuses = result.map((status) => ({
         id: status.id,
-        status: status.status, // Burada status.name veya benzeri bir alan adı kullanmalısınız.
-        label: status.status, // Aynı şekilde burada da.
-        value: status.id, // Ve burada da.
+        status: status.status,
+        label: status.status,
+        value: status.id,
       }));
     });
   }
 
-  loadFiles(orderId: string) {
-    this.orderFilesService.getOrderFiles(orderId).subscribe((files) => {
-      this.files = files.map((file) => ({
-        ...file,
-        fileUrl: this.photoUrl + file.fileUrl,
-      }));
-    });
-  }
-
-  activeIndexChange(event: any): void {
-    this.activeIndex = event; // Update activeIndex when a tab is changed
-    const activeOrder = this.orders[this.activeIndex];
-    if (activeOrder) {
-      this.loadFiles(activeOrder.id); // Load files for the active order
-    }
+  getBrands(orderDetails: { [key: string]: any[] }): string[] {
+    return Object.keys(orderDetails);
   }
 
   getStatusLabel(statusId: string): string {
@@ -158,14 +179,6 @@ export class ExportDashboardForAdminComponent implements OnInit {
       });
   }
 
-  isImage(fileName: string): boolean {
-    return /\.(jpg|jpeg|png|gif)$/i.test(fileName);
-  }
-
-  isDocument(fileName: string): boolean {
-    return /\.(pdf|doc|docx|xls|xlsx)$/i.test(fileName);
-  }
-
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
@@ -173,6 +186,59 @@ export class ExportDashboardForAdminComponent implements OnInit {
   clear(table: Table) {
     table.clear();
     this.filter.nativeElement.value = '';
+  }
+
+  getBrandStatus(orderDetails: any[]): string {
+    const statuses = orderDetails.map((detail) => detail.status);
+    const uniqueStatuses = new Set(statuses);
+
+    if (uniqueStatuses.size === 1) {
+      const status = statuses[0];
+      switch (status) {
+        case 'New Order':
+          return 'Yeni Sipariş';
+        case 'In Production':
+          return 'Üretimde';
+        case 'Production Completed':
+          return 'Üretim Tamamlandı';
+        case 'Packaging in Progress':
+          return 'Paketleniyor';
+        case 'Packaging Completed':
+          return 'Paketlendi';
+        case 'Awaiting Shipment':
+          return 'Kargolanacak';
+        case 'Shipped':
+          return 'Kargolandı';
+        case 'In Customs':
+          return 'Gümrükte';
+        case 'Customs Clearance Completed':
+          return 'Gümrük işlemleri tamamlandı';
+        case 'Delivered':
+          return 'Teslim Edildi';
+        case 'Order Completed':
+          return 'Sipariş Tamamlandı';
+        default:
+          return status; // Bilinmeyen durumlar için orijinal değeri döndür
+      }
+    } else {
+      const allStatuses = [
+        'New Order',
+        'In Production',
+        'Production Completed',
+        'Packaging in Progress',
+        'Packaging Completed',
+        'Awaiting Shipment',
+        'Shipped',
+        'In Customs',
+        'Customs Clearance Completed',
+        'Delivered',
+        'Order Completed',
+      ];
+      const firstIncompleteStatus = allStatuses.find((status) =>
+        statuses.includes(status)
+      );
+      return firstIncompleteStatus || 'Karışık Durum'; // Farklı durumlar varsa ilk tamamlanmamış durumu veya "Karışık Durum" döndür
+    }
   }
 
   getSeverity(status: string) {
