@@ -25,6 +25,7 @@ import { OrderFilesService } from '../../services/order-files.service';
 import { OrderFile } from '../../interfaces/file-model';
 import { OrderDetailResponse } from '../../interfaces/order-detail-response';
 import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 interface Status {
   id: string;
@@ -57,7 +58,7 @@ interface Status {
 export class ExportDashboardForAdminComponent implements OnInit {
   orderUploadFileForm!: FormGroup;
 
-  apiURL: string = environment.apiUrl;
+  apiUrl: string = environment.apiUrl;
 
   photoUrl: string = environment.photoUrl;
 
@@ -73,7 +74,9 @@ export class ExportDashboardForAdminComponent implements OnInit {
 
   orderDetails: any[] = [];
 
-  activeIndex: number = 0;
+  activeOrderIndexes: boolean[] = [];
+
+  activeBrandIndexes: { [orderId: number]: boolean[] } = {};
 
   @ViewChild('filter') filter!: ElementRef;
 
@@ -85,35 +88,22 @@ export class ExportDashboardForAdminComponent implements OnInit {
     private orderService: OrderService,
     private messageService: MessageService,
     private orderFilesService: OrderFilesService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
-    this.orderUploadFileForm = this.fb.group({
-      orderFile: [File, Validators.required],
-    });
-    this.loadOrders();
     this.loadStatuses();
     this.loadOrdersCustomOutput();
-  }
-
-  get orderFile() {
-    return this.orderUploadFileForm.get('orderFile') as FormControl;
   }
 
   private loadOrdersCustomOutput() {
     this.orderService
       .getOrderWithDetailsGroupcaseBrandInOrderDetail()
       .subscribe((result) => {
+        console.log(result);
         this.ordersCustom = result;
       });
-  }
-
-  private loadOrders() {
-    this.orderService.getOrdersWithDetails().subscribe((result) => {
-      this.orders = result;
-    });
-
     this.loadStatuses();
   }
 
@@ -135,48 +125,6 @@ export class ExportDashboardForAdminComponent implements OnInit {
   getStatusLabel(statusId: string): string {
     const status = this.statuses.find((s) => s.id === statusId);
     return status ? status.label : 'Unknown';
-  }
-
-  onStatusChange(orderDetail: any, newStatusId: string) {
-    this.orderService
-      .updateOrderDetailStatus(orderDetail.id, newStatusId)
-      .subscribe({
-        next: (response) => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Order status updated successfully',
-          });
-
-          // Find the index of the updated orderDetail
-          const orderIndex = this.orders.findIndex((order) =>
-            order.orderDetails.some((od: any) => od.id === orderDetail.id)
-          );
-
-          if (orderIndex > -1) {
-            // Find the orderDetail object within the order
-            const orderDetailToUpdate = this.orders[
-              orderIndex
-            ].orderDetails.find((od: any) => od.id === orderDetail.id);
-
-            if (orderDetailToUpdate) {
-              // Update the original orderDetail object (and potentially the status label)
-              orderDetailToUpdate.statusId = newStatusId;
-              orderDetailToUpdate.status =
-                this.statuses.find((s) => s.id === newStatusId)?.label ||
-                orderDetailToUpdate.status;
-            }
-          }
-        },
-        error: (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to update order status',
-          });
-          console.error('Failed to update order status', error);
-        },
-      });
   }
 
   onGlobalFilter(table: Table, event: Event) {
@@ -276,5 +224,64 @@ export class ExportDashboardForAdminComponent implements OnInit {
       default:
         return 'info';
     }
+  }
+
+  toggleOrder(index: number) {
+    this.activeOrderIndexes[index] = !this.activeOrderIndexes[index];
+  }
+
+  toggleBrand(orderId: number, brandIndex: number) {
+    if (!this.activeBrandIndexes[orderId]) {
+      this.activeBrandIndexes[orderId] = [];
+    }
+    this.activeBrandIndexes[orderId][brandIndex] =
+      !this.activeBrandIndexes[orderId][brandIndex];
+  }
+
+  onStatusChange(order: any, newStatusId: string, brandId: string) {
+    const orderDetailToUpdate = order.orderDetails[brandId.toUpperCase()][0]; // İlk orderDetail öğesini alın
+    const caseBrandId = orderDetailToUpdate.brandId; // caseBrandId'yi orderDetail'den alın
+
+    this.orderService
+      .updateOrderDetailStatus(order.id, newStatusId, caseBrandId)
+      .subscribe({
+        next: (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Order status updated successfully',
+          });
+
+          // Find the index of the updated orderDetail
+          const orderIndex = this.ordersCustom.findIndex(
+            (o) => o.id === order.id
+          );
+          if (orderIndex > -1) {
+            const brandIndex = this.ordersCustom[orderIndex].orderDetails[
+              brandId.toUpperCase()
+            ].findIndex((od: any) => od.id === orderDetailToUpdate.id);
+
+            if (brandIndex > -1) {
+              // Update the original orderDetail object
+              this.ordersCustom[orderIndex].orderDetails[brandId.toUpperCase()][
+                brandIndex
+              ].status = newStatusId;
+            }
+          }
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update order status',
+          });
+          console.error('Failed to update order status', error);
+        },
+      });
+  }
+
+  updateOrderDetailStatus(orderId: string, statusId: string, caseBrandId: string) {
+    const url = `${this.apiUrl}/order/order-details-status/${orderId}/${caseBrandId}`;
+    return this.http.patch(url, { statusId });
   }
 }

@@ -106,8 +106,8 @@ export class OrderService {
     return this.http.get<any[]>(`${this.apiUrl}/status`);
   }
 
-  updateOrderDetailStatus(orderDetailId: string, statusId: string) {
-    const url = `${this.apiUrl}/order/order-details-status/${orderDetailId}`;
+  updateOrderDetailStatus(orderId: string, statusId: string, caseBrandId: string) {
+    const url = `${this.apiUrl}/order/order-details-status/${orderId}/${caseBrandId}`;
     return this.http.patch(url, { statusId });
   }
 
