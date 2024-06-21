@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Observable, map } from 'rxjs';
+import { Observable, filter, map, mergeMap } from 'rxjs';
 import { AuthResponse } from '../interfaces/auth-response';
 import { LoginRequest } from '../interfaces/login-request';
 import { jwtDecode } from 'jwt-decode';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ import { jwtDecode } from 'jwt-decode';
 export class AuthService {
   apiUrl: string = environment.apiUrl;
   private tokenKey = 'accessToken';
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router) {}
 
   login(data: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, data).pipe(
@@ -34,6 +35,15 @@ export class AuthService {
     if (!token) return false;
     return !this.isTokenExpired();
   };
+
+  getUserRole(): string | null {
+    const token = this.getToken();
+    if (token) {
+      const decodedToken: any = jwtDecode(token);
+      return decodedToken.userRole; // Rol bilgisini payload'dan alıyoruz.
+    }
+    return null;
+  }
 
   private getToken = (): string | null =>
     localStorage.getItem(this.tokenKey) || '';

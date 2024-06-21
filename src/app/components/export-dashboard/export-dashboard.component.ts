@@ -9,19 +9,18 @@ import { Table, TableModule } from 'primeng/table';
 import { OrderService } from '../../services/order.service';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { AccordionModule } from 'primeng/accordion';
-import { BadgeModule } from 'primeng/badge';
-import { CaseBrand } from '../../interfaces/case-brand-response';
-import stringify from 'json-stringify-safe';
 import { TagModule } from 'primeng/tag';
 import { ImageModule } from 'primeng/image';
 import { environment } from '../../../environments/environment';
 import { ToastModule } from 'primeng/toast';
-import { FileUploadModule } from 'primeng/fileupload';
 import { DropdownModule } from 'primeng/dropdown';
+import * as jwt_decode from "jwt-decode";
 
 interface Status {
   id: string;
   status: string;
+  label: string;
+  value: string;
 }
 
 @Component({
@@ -46,15 +45,13 @@ interface Status {
   providers: [OrderService, MessageService],
 })
 export class ExportDashboardComponent implements OnInit {
-  apiURL: string = environment.apiUrl;
+  apiUrl: string = environment.apiUrl;
 
   photoUrl: string = environment.photoUrl;
 
-  statuses: Status[] | undefined;
+  statuses: Status[] = [];
 
   selectedStatus: Status | undefined;
-
-  caseBrands: CaseBrand[] = [];
 
   orders: any[] = [];
 
@@ -62,32 +59,124 @@ export class ExportDashboardComponent implements OnInit {
 
   @ViewChild('filter') filter!: ElementRef;
 
+  accessToken: string = localStorage.getItem('accessToken') || '';
+
+  getDecodedAccessToken(token: string): any {
+    try {
+      return jwt_decode.jwtDecode(token);
+    } catch(Error) {
+      return null;
+    }
+  }
+
+  userId = this.getDecodedAccessToken(this.accessToken).userId;
+
   constructor(
     private orderService: OrderService,
-    private messageService: MessageService
+    private messageService: MessageService,
   ) {}
 
   ngOnInit(): void {
-    this.orderService.getOrdersWithDetails().subscribe((result) => {
-      this.orders = result;
-    });
+    this.loadStatuses();
+    this.loadOrdersCustomOutput();
+  }
 
-    this.orderService.getStatuses().subscribe((result) => {
-      this.statuses = result;
+  private loadOrdersCustomOutput() {
+    this.orderService
+      .getOrderWithDetailsGroupcaseBrandInOrderDetailByUserId()
+      .subscribe((result) => {
+        console.log(result);
+        this.orders = result;
+      });
+    this.loadStatuses();
+  }
+
+  private loadStatuses() {
+    this.orderService.getStatuses().subscribe((result: any[]) => {
+      this.statuses = result.map((status) => ({
+        id: status.id,
+        status: status.status,
+        label: status.status,
+        value: status.id,
+      }));
     });
+  }
+
+  getBrands(orderDetails: { [key: string]: any[] }): string[] {
+    return Object.keys(orderDetails);
   }
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
+
   clear(table: Table) {
     table.clear();
     this.filter.nativeElement.value = '';
   }
+
+  downloadOrder(orderId: string, caseBrandName: string) {
+    const apiUrl: string = environment.apiUrl;
+    window.location.href = `${apiUrl}/order/export-orders-to-excel-user/${this.userId}/${orderId}/${caseBrandName}`;
+  }
+
+  getBrandStatus(orderDetails: any[]): string {
+    const statuses = orderDetails.map((detail) => detail.status);
+    const uniqueStatuses = new Set(statuses);
+
+    if (uniqueStatuses.size === 1) {
+      const status = statuses[0];
+      switch (status) {
+        case 'New Order':
+          return 'Yeni Sipariş';
+        case 'In Production':
+          return 'Üretimde';
+        case 'Production Completed':
+          return 'Üretim Tamamlandı';
+        case 'Packaging in Progress':
+          return 'Paketleniyor';
+        case 'Packaging Completed':
+          return 'Paketlendi';
+        case 'Awaiting Shipment':
+          return 'Kargolanacak';
+        case 'Shipped':
+          return 'Kargolandı';
+        case 'In Customs':
+          return 'Gümrükte';
+        case 'Customs Clearance Completed':
+          return 'Gümrük işlemleri tamamlandı';
+        case 'Delivered':
+          return 'Teslim Edildi';
+        case 'Order Completed':
+          return 'Sipariş Tamamlandı';
+        default:
+          return status; // Bilinmeyen durumlar için orijinal değeri döndür
+      }
+    } else {
+      const allStatuses = [
+        'New Order',
+        'In Production',
+        'Production Completed',
+        'Packaging in Progress',
+        'Packaging Completed',
+        'Awaiting Shipment',
+        'Shipped',
+        'In Customs',
+        'Customs Clearance Completed',
+        'Delivered',
+        'Order Completed',
+      ];
+      const firstIncompleteStatus = allStatuses.find((status) =>
+        statuses.includes(status)
+      );
+      return firstIncompleteStatus || 'Karışık Durum'; // Farklı durumlar varsa ilk tamamlanmamış durumu veya "Karışık Durum" döndür
+    }
+  }
+
   getSeverity(status: string) {
     switch (status) {
       case 'New Order':
-        return 'info';
+        return 'danger';
       case 'In Production':
         return 'info';
       case 'Production Completed':
@@ -107,7 +196,7 @@ export class ExportDashboardComponent implements OnInit {
       case 'Delivered':
         return 'info';
       case 'Cancelled':
-        return 'danger';
+        return 'contrast';
       case 'Return Requested':
         return 'warning';
       case 'Return Approved':
@@ -117,7 +206,53 @@ export class ExportDashboardComponent implements OnInit {
       case 'Order Completed':
         return 'contrast';
       default:
-        return 'info'; // Add a default case that returns a default value.
+        return 'info';
     }
+  }
+
+  onStatusChange(order: any, orderDetail: any, newStatusId: string) {
+    const caseBrandId = orderDetail[0].brandId;
+    this.orderService
+      .updateOrderDetailStatus(order.id, newStatusId, caseBrandId)
+      .subscribe({
+        next: (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Order status updated successfully',
+          });
+
+          // Find the index of the updated orderDetail
+          const orderIndex = this.orders.findIndex((order) =>
+            order.orderDetails.some((od: any) => od.id === orderDetail.id)
+          );
+
+          if (orderIndex > -1) {
+            // Find the orderDetail object within the order
+            const orderDetailToUpdate = this.orders[
+              orderIndex
+            ].orderDetails.find((od: any) => od.id === orderDetail.id);
+
+            if (orderDetailToUpdate) {
+              // Update the original orderDetail object (and potentially the status label)
+              orderDetailToUpdate.statusId = newStatusId;
+              orderDetailToUpdate.status =
+                this.statuses.find((s) => s.id === newStatusId)?.label ||
+                orderDetailToUpdate.status;
+            }
+          }
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update order status',
+          });
+          console.error('Failed to update order status', error);
+        },
+      });
+
+      this.loadOrdersCustomOutput();
+      this.loadStatuses();
   }
 }

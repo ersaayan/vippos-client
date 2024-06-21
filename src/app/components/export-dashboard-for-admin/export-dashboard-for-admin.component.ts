@@ -2,7 +2,6 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { OrderService } from '../../services/order.service';
 import { environment } from '../../../environments/environment';
-import stringify from 'json-stringify-safe';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { AccordionModule } from 'primeng/accordion';
@@ -11,19 +10,15 @@ import { DropdownModule } from 'primeng/dropdown';
 import { ImageModule } from 'primeng/image';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
+import { ListboxModule } from 'primeng/listbox';
 import {
   FormBuilder,
-  FormControl,
-  FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  Validators,
 } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { OrderFilesService } from '../../services/order-files.service';
 import { OrderFile } from '../../interfaces/file-model';
-import { OrderDetailResponse } from '../../interfaces/order-detail-response';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
@@ -50,13 +45,15 @@ interface Status {
     InputTextModule,
     SelectButtonModule,
     ReactiveFormsModule,
+    ListboxModule,
+    ButtonModule,
   ],
   templateUrl: './export-dashboard-for-admin.component.html',
   styleUrl: './export-dashboard-for-admin.component.css',
   providers: [OrderService, MessageService],
 })
 export class ExportDashboardForAdminComponent implements OnInit {
-  orderUploadFileForm!: FormGroup;
+  selectedFile: File | null = null;
 
   apiUrl: string = environment.apiUrl;
 
@@ -68,17 +65,10 @@ export class ExportDashboardForAdminComponent implements OnInit {
 
   orders: any[] = [];
 
-  ordersCustom: any[] = [];
-
-  files: OrderFile[] = [];
-
   orderDetails: any[] = [];
 
-  activeOrderIndexes: boolean[] = [];
-
-  activeBrandIndexes: { [orderId: number]: boolean[] } = {};
-
   @ViewChild('filter') filter!: ElementRef;
+
 
   fileName = 'Select File';
   fileInfos?: Observable<any>;
@@ -87,10 +77,13 @@ export class ExportDashboardForAdminComponent implements OnInit {
   constructor(
     private orderService: OrderService,
     private messageService: MessageService,
-    private orderFilesService: OrderFilesService,
     private fb: FormBuilder,
     private http: HttpClient
   ) {}
+
+  onFileSelected(event: any): void {
+    this.selectedFile = event.target.files[0];
+  }
 
   ngOnInit(): void {
     this.loadStatuses();
@@ -102,12 +95,12 @@ export class ExportDashboardForAdminComponent implements OnInit {
       .getOrderWithDetailsGroupcaseBrandInOrderDetail()
       .subscribe((result) => {
         console.log(result);
-        this.ordersCustom = result;
+        this.orders = result;
       });
     this.loadStatuses();
   }
 
-  loadStatuses(): void {
+  private loadStatuses() {
     this.orderService.getStatuses().subscribe((result: any[]) => {
       this.statuses = result.map((status) => ({
         id: status.id,
@@ -122,11 +115,6 @@ export class ExportDashboardForAdminComponent implements OnInit {
     return Object.keys(orderDetails);
   }
 
-  getStatusLabel(statusId: string): string {
-    const status = this.statuses.find((s) => s.id === statusId);
-    return status ? status.label : 'Unknown';
-  }
-
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
@@ -134,6 +122,45 @@ export class ExportDashboardForAdminComponent implements OnInit {
   clear(table: Table) {
     table.clear();
     this.filter.nativeElement.value = '';
+  }
+
+  downloadOrder(orderId: string, caseBrandName: string) {
+
+    window.location.href = `${this.apiUrl}/order/export-orders-to-excel-admin/${orderId}/${caseBrandName}`;
+  }
+
+  uploadFile(orderId: string): void {
+    if (this.selectedFile) {
+      const formData = new FormData();
+
+      formData.append('orderId', orderId);
+
+      formData.append('file', this.selectedFile, this.selectedFile.name);
+
+      this.http.post(`${this.apiUrl}/order/upload-file`, formData).subscribe(
+        (response) => {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'File uploaded successfully' });
+          this.loadStatuses();
+          this.loadOrdersCustomOutput();
+        },
+        (error) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'File upload failed' });
+        }
+      );
+    }
+  }
+
+  deleteFile(fileId: string): void {
+    this.orderService.deleteOrderFile(fileId).subscribe(
+      (response) => {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'File deleted successfully' });
+        this.loadStatuses();
+        this.loadOrdersCustomOutput();
+      },
+      (error) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'File deletion failed' });
+      }
+    );
   }
 
   getBrandStatus(orderDetails: any[]): string {
@@ -226,22 +253,8 @@ export class ExportDashboardForAdminComponent implements OnInit {
     }
   }
 
-  toggleOrder(index: number) {
-    this.activeOrderIndexes[index] = !this.activeOrderIndexes[index];
-  }
-
-  toggleBrand(orderId: number, brandIndex: number) {
-    if (!this.activeBrandIndexes[orderId]) {
-      this.activeBrandIndexes[orderId] = [];
-    }
-    this.activeBrandIndexes[orderId][brandIndex] =
-      !this.activeBrandIndexes[orderId][brandIndex];
-  }
-
-  onStatusChange(order: any, newStatusId: string, brandId: string) {
-    const orderDetailToUpdate = order.orderDetails[brandId.toUpperCase()][0]; // İlk orderDetail öğesini alın
-    const caseBrandId = orderDetailToUpdate.brandId; // caseBrandId'yi orderDetail'den alın
-
+  onStatusChange(order: any, orderDetail: any, newStatusId: string) {
+    const caseBrandId = orderDetail[0].brandId;
     this.orderService
       .updateOrderDetailStatus(order.id, newStatusId, caseBrandId)
       .subscribe({
@@ -253,19 +266,22 @@ export class ExportDashboardForAdminComponent implements OnInit {
           });
 
           // Find the index of the updated orderDetail
-          const orderIndex = this.ordersCustom.findIndex(
-            (o) => o.id === order.id
+          const orderIndex = this.orders.findIndex((order) =>
+            order.orderDetails.some((od: any) => od.id === orderDetail.id)
           );
-          if (orderIndex > -1) {
-            const brandIndex = this.ordersCustom[orderIndex].orderDetails[
-              brandId.toUpperCase()
-            ].findIndex((od: any) => od.id === orderDetailToUpdate.id);
 
-            if (brandIndex > -1) {
-              // Update the original orderDetail object
-              this.ordersCustom[orderIndex].orderDetails[brandId.toUpperCase()][
-                brandIndex
-              ].status = newStatusId;
+          if (orderIndex > -1) {
+            // Find the orderDetail object within the order
+            const orderDetailToUpdate = this.orders[
+              orderIndex
+            ].orderDetails.find((od: any) => od.id === orderDetail.id);
+
+            if (orderDetailToUpdate) {
+              // Update the original orderDetail object (and potentially the status label)
+              orderDetailToUpdate.statusId = newStatusId;
+              orderDetailToUpdate.status =
+                this.statuses.find((s) => s.id === newStatusId)?.label ||
+                orderDetailToUpdate.status;
             }
           }
         },
@@ -278,10 +294,8 @@ export class ExportDashboardForAdminComponent implements OnInit {
           console.error('Failed to update order status', error);
         },
       });
-  }
 
-  updateOrderDetailStatus(orderId: string, statusId: string, caseBrandId: string) {
-    const url = `${this.apiUrl}/order/order-details-status/${orderId}/${caseBrandId}`;
-    return this.http.patch(url, { statusId });
+      this.loadOrdersCustomOutput();
+      this.loadStatuses();
   }
 }
