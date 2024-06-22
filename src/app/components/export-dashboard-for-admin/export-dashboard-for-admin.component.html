@@ -23,7 +23,7 @@
         </span>
       </ng-template>
       <div class="flex justify-content-center">
-        <div class="col-12 xl:col-11">
+        <div class="col-12 xl:col-10">
           <p-accordion>
             <p-accordionTab *ngFor="let brand of getBrands(order.orderDetails)">
               <ng-template pTemplate="header">
@@ -173,10 +173,17 @@
             </p-accordionTab>
           </p-accordion>
         </div>
-        <div class="col-12 xl:col-1">
+        <div class="col-12 xl:col-2">
           <ul>
             <li *ngFor="let file of order.orderFiles" class="flex justify-content-center">
-              <p-button icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" (onClick)="deleteFile(file.id)"/>
+              <button
+                pButton
+                icon="pi pi-times"
+                [rounded]="true"
+                [text]="true"
+                severity="danger"
+                (click)="deleteFile(file.id)"
+              ></button>
               <a [href]="photoUrl + file.fileUrl" target="_blank">{{ file.fileName }}</a>
             </li>
           </ul>
