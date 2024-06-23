@@ -14,6 +14,7 @@ import { ExportDashboardForAdminComponent } from './components/export-dashboard-
 import { LandingComponent } from './components/landing/landing.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
+import { CreateOrderComponent } from './components/create-order/create-order.component';
 
 export const routes: Routes = [
   {
@@ -94,6 +95,13 @@ export const routes: Routes = [
       {
         path: 'export-admin',
         component: ExportDashboardForAdminComponent,
+        canActivate: [authGuard],
+        data: { allowedRoles: ['ADMIN'] },
+        pathMatch: 'full',
+      },
+      {
+        path: 'create-order',
+        component: CreateOrderComponent,
         canActivate: [authGuard],
         data: { allowedRoles: ['ADMIN'] },
         pathMatch: 'full',

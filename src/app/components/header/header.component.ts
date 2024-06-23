@@ -38,25 +38,32 @@ export class HeaderComponent implements OnInit {
         label: 'Home',
         icon: 'pi pi-home',
         route: ['/home'],
-        allowedRoles: ['ADMIN', 'USER', 'MANUFACTURER']
+        allowedRoles: ['ADMIN', 'USER', 'MANUFACTURER'],
       },
       {
         label: 'Dashboard',
         icon: 'pi pi-chart-bar',
         route: ['/dashboard'],
-        allowedRoles: ['ADMIN']
+        allowedRoles: ['ADMIN'],
       },
       {
-        label: 'Stock Cart Generator',
+        label: 'Stock Carts',
         icon: 'pi pi-check-square',
-        route: ['/generator'],
-        allowedRoles: ['ADMIN', 'USER']
-      },
-      {
-        label: 'View & Download Stock Cart',
-        icon: 'pi pi-database',
-        route: ['/database'],
-        allowedRoles: ['ADMIN', 'USER']
+        allowedRoles: ['ADMIN', 'USER'],
+        items: [
+          {
+            label: 'Stock Cart Generator',
+            icon: 'pi pi-cart-plus',
+            route: ['/generator'],
+            allowedRoles: ['ADMIN', 'USER'],
+          },
+          {
+            label: 'View & Download Stock Cart',
+            icon: 'pi pi-database',
+            route: ['/database'],
+            allowedRoles: ['ADMIN', 'USER'],
+          },
+        ],
       },
       {
         label: 'Case Brand Model Generator',
@@ -65,11 +72,13 @@ export class HeaderComponent implements OnInit {
         items: [
           {
             label: 'Case Brand Generator',
+            icon: 'pi pi-plus-circle',
             route: ['/brand'],
             allowedRoles: ['ADMIN', 'USER'],
           },
           {
             label: 'Case Model Generator',
+            icon: 'pi pi-search-plus',
             route: ['/model'],
             allowedRoles: ['ADMIN', 'USER'],
           },
@@ -98,23 +107,38 @@ export class HeaderComponent implements OnInit {
         label: 'Export Dashboard',
         icon: 'pi pi-upload',
         route: ['/export'],
-        allowedRoles: ['MANUFACTURER']
+        allowedRoles: ['MANUFACTURER'],
       },
       {
-        label: 'Export Dashboard For Admin',
+        label: 'Supplier',
         icon: 'pi pi-upload',
-        route: ['/export-admin'],
-        allowedRoles: ['ADMIN']
+        allowedRoles: ['ADMIN'],
+        items: [
+          {
+            label: 'Supplier Dashboard',
+            icon: 'pi pi-chart-bar',
+            route: ['/export-admin'],
+            allowedRoles: ['ADMIN'],
+          },
+          {
+            label: 'Create Order',
+            icon: 'pi pi-shopping-cart',
+            allowedRoles: ['ADMIN'],
+            route: ['/create-order'],
+          },
+        ],
       },
       {
         label: 'Logout',
         icon: 'pi pi-sign-out',
         function: this.authService.logout,
         route: ['/login'],
-        allowedRoles: ['ADMIN', 'USER', 'MANUFACTURER']
-      }
+        allowedRoles: ['ADMIN', 'USER', 'MANUFACTURER'],
+      },
     ];
 
-    this.menuItems = allMenuItems.filter(item => item.allowedRoles.includes(this.userRole));
+    this.menuItems = allMenuItems.filter((item) =>
+      item.allowedRoles.includes(this.userRole)
+    );
   }
 }
